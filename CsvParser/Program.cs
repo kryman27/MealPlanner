@@ -8,7 +8,7 @@ namespace CsvParser
         {
             List<SingleEntry> entries = new List<SingleEntry>();
 
-            string filePath = @"C:\Users\user\source\repos\EatoMeter\DbContent.csv";
+            string filePath = @"C:\Users\user\source\repos\MealPlanner\DbContent.csv";
             try
             {
                 string[] fileContent = File.ReadAllLines(filePath);
@@ -35,7 +35,7 @@ namespace CsvParser
                 Console.WriteLine(e.Message);
             }
 
-            string dbQueryPath = @"C:\Users\user\source\repos\EatoMeter\dbQuery.sql";
+            string dbQueryPath = @"C:\Users\user\source\repos\MealPlanner\dbQuery.sql";
             foreach (var entry in entries)
             {
                 string query = $"INSERT INTO Products (ProductName, Fat, Carbohydrates, Protein, Energy) VALUES('{entry.Product.ToString(CultureInfo.InvariantCulture)}', {entry.Fat.ToString(CultureInfo.InvariantCulture)}, {entry.Carbohydrates.ToString(CultureInfo.InvariantCulture)}, {entry.Proteins.ToString(CultureInfo.InvariantCulture)}, {entry.Energy.ToString(CultureInfo.InvariantCulture)})";
