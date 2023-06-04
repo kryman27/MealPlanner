@@ -34,5 +34,30 @@ namespace MealPlannerAPI.Controllers
                 return e;
             }
         }
+
+        [HttpPost("AddNewProduct/{name}/{fat}/{carb}/{prot}/{en}")]
+        public void AddNewProduct(string name, double fat, double carb, double prot, double enrg)
+        {
+            Product insertProd = new Product();
+            insertProd.ProductName = name;
+            insertProd.Fat = fat;
+            insertProd.Carbohydrates = carb;
+            insertProd.Protein = prot;
+            insertProd.Energy = enrg;
+
+
+            using (MealPlannerDbContext dbCtx = new MealPlannerDbContext())
+            {
+                try
+                {
+                    dbCtx.Products.Add(insertProd);
+                    dbCtx.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
     }
 }
