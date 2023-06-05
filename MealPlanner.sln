@@ -5,7 +5,9 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MealPlannerAPI", "MealPlanner\MealPlannerAPI.csproj", "{C222E084-60B5-4FA4-8F79-04349FFD6A7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvParser", "CsvParser\CsvParser.csproj", "{214B4CED-E937-4646-8224-298E5E4E6030}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvParser", "CsvParser\CsvParser.csproj", "{214B4CED-E937-4646-8224-298E5E4E6030}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MealPlannerUI", "MealPlannerUI\MealPlannerUI.csproj", "{682DB399-2D7F-47CE-AF7B-FDF6CBEFFCEB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{214B4CED-E937-4646-8224-298E5E4E6030}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{214B4CED-E937-4646-8224-298E5E4E6030}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{214B4CED-E937-4646-8224-298E5E4E6030}.Release|Any CPU.Build.0 = Release|Any CPU
+		{682DB399-2D7F-47CE-AF7B-FDF6CBEFFCEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{682DB399-2D7F-47CE-AF7B-FDF6CBEFFCEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{682DB399-2D7F-47CE-AF7B-FDF6CBEFFCEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{682DB399-2D7F-47CE-AF7B-FDF6CBEFFCEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

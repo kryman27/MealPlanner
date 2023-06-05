@@ -6,7 +6,8 @@ namespace MealPlannerAPI.Controllers
     [ApiController]
     public class MealPlannerController : ControllerBase
     {
-        [HttpGet("GetProducts")]
+        [Route("GetProducts")]
+        [HttpGet]
         public List<Product> GetProducts()
         {
             using (MealPlannerDbContext dbCtx = new MealPlannerDbContext())

@@ -1,0 +1,44 @@
+﻿@page "/fetchproductfromapi"
+@using MealPlannerUI.Data
+@inject WeatherForecastService ForecastService
+@inject ProductInfoService ProdService
+
+<PageTitle>MealPlannerUI</PageTitle>
+
+<h1>MealPlanner database items</h1>
+
+<p>This page demonstrates fetching data from a service's database.</p>
+
+@if (prodInfForUI == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Fat</th>
+                <th>Carbohydrates</th>
+                <th>Proteins</th>
+                <th>Energy</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var prod in prodInfForUI)
+            {
+                <tr>
+                    <td>@prod.ProductName</td>
+                    <td>@prod.Fat</td>
+                    <td>@prod.Carbohydrates</td>
+                    <td>@prod.Protein</td>
+                    <td>@prod.Energy</td>
+                    
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
