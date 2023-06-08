@@ -4,26 +4,36 @@ namespace MealPlannerUI.Data
 {
     public class ProductInfoService
     {
+        public static string dbLoadingExMsg = "unknown error";
         public async Task<ProductInfo[]> GetProductsInfo()
         {
-            //List<ProductInfo> products = new List<ProductInfo>();
-            HttpClient client = new HttpClient();
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    string productsApiUrl = "http://localhost:5068/GetProducts";
 
-            string productsApiUrl = "http://localhost:5068/GetProducts";
-            //var response = client.GetAsync(connectionPath).Result.ToString();
-            //var result = JsonConvert.DeserializeObject<ProductInfo>(response);
+                    HttpResponseMessage response = await client.GetAsync(productsApiUrl);
+                    string rawData = await response.Content.ReadAsStringAsync();
 
-            //return result.ToString();
+                    var productInfoToDisplay = JsonConvert.DeserializeObject<ProductInfo[]>(rawData);
 
-            HttpResponseMessage response = await client.GetAsync(productsApiUrl);
-            string rawData = await response.Content.ReadAsStringAsync();
+                    return productInfoToDisplay;
+                }
+            }
+            catch (Exception ex)
+            {
+                dbLoadingExMsg = ex.Message.ToString();
+            }
 
-            var productInfoToDisplay = JsonConvert.DeserializeObject<ProductInfo[]>(rawData);
-
-            client.CancelPendingRequests();
-            client.Dispose();
-
-            return productInfoToDisplay;
+            ProductInfo[] error = new ProductInfo[1]
+            {
+                new ProductInfo
+                {
+                    ProductName = dbLoadingExMsg
+                }
+            };
+            return error;
         }
     }
 }
