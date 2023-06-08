@@ -4,7 +4,7 @@ namespace MealPlannerAPI.Controllers
 {
     [ApiController]
     //[Route("[controller]")]
-    public class DupaCichoController : ControllerBase
+    public class TestController : ControllerBase
     {
         [HttpGet("GetHello")]
         public string GetHello()
@@ -12,10 +12,16 @@ namespace MealPlannerAPI.Controllers
             return "Hello fello";
         }
 
-        [HttpGet("GetDupa")]
-        public string GetDupa()
+        [HttpGet("GetString")]
+        public string GetString()
         {
-            return "Dupa cicho leszczu!";
+            return "This is a string for example";
+        }
+
+        [HttpPost("PostString/{id}/{input}")]
+        public string PostString(int id, string input)
+        {
+            return $"Posted string: {input} with id: {id}";
         }
     }
 }
