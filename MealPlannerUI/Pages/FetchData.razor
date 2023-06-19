@@ -1,47 +1,51 @@
 ﻿@page "/fetchdata"
 @using MealPlannerUI.Data
-@inject WeatherForecastService ForecastService
+@inject AddProductService AddNewProduct
 
-<PageTitle>Weather forecast</PageTitle>
+<PageTitle>Add product</PageTitle>
 
-<h1>Weather forecast</h1>
+<h1>Add product</h1>
 
-<p>This component demonstrates fetching data from a service.</p>
+<p>Add product to database</p>
 
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
     <table class="table">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th>Product Name</th>
+                <th>Fat</th>
+                <th>Carbohydrates</th>
+                <th>Proteins</th>
+                <th>Energy</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
-            {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+            <td><input type="text" name="ProductName" @bind="productNameLocal" /></td>
+                    <td><input type="number" name="Fat" @bind="fat" /></td>
+                    <td><input type="number" name="Carbohydrates" @bind="carbs"/></td>
+                    <td><input type="number" name="Proteins" @bind="prots"/></td>
+                    <td><input type="number" name="Energy" @bind="nrg"/></td>
                 </tr>
-            }
         </tbody>
     </table>
-}
+<button class="btn btn-primary" @onclick="AddProductToDb">Add product do database</button>
+
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private string productNameLocal;
+    private double fat;
+    private double carbs;
+    private double prots;
+    private double nrg;
 
-    protected override async Task OnInitializedAsync()
+    private void AddProductToDb()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateOnly.FromDateTime(DateTime.Now));
+        AddNewProduct.AddProductToDb(productNameLocal, fat, carbs, prots, nrg);
+        productNameLocal = null;
+        fat = 0.0;
+        carbs = 0.0;
+        prots = 0.0;
+        nrg = 0.0;
+
     }
 }
