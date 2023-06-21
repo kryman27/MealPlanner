@@ -36,7 +36,7 @@ namespace MealPlannerAPI.Controllers
             }
         }
 
-        [HttpPost("AddNewProduct/{name}/{fat}/{carb}/{prot}/{en}")]
+        [HttpPost("AddNewProduct/{name}/{fat}/{carb}/{prot}/{enrg}")]
         public void AddNewProduct(string name, double fat, double carb, double prot, double enrg)
         {
             Product insertProd = new Product();
