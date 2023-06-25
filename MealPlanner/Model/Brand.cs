@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MealPlannerAPI.Models;
+namespace MealPlannerAPI.Model;
 
 public partial class Brand
 {
-    public int Id { get; set; }
+    public int IdBrand { get; set; }
 
     public string? BrandName { get; set; }
 

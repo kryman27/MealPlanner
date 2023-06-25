@@ -1,0 +1,76 @@
+﻿@page "/findproduct"
+@using MealPlannerUI.Data
+@inject ProductInfoService prodInfoServ
+
+<h3>Find Product</h3>
+
+<table class="table" name="aaa">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Fat</th>
+            <th>Carbohydrates</th>
+            <th>Proteins</th>
+            <th>Energy(per 100g)</th>
+            <th>Select</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (firstRenderFlag)
+        {
+            <tr>
+                <td>null</td>
+                <td>null</td>
+                <td>null</td>
+                <td>null</td>
+                <td>null</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var p in found)
+            {
+                <tr>
+                    <td>@p.ProductName</td>
+                    <td>@p.Fat</td>
+                    <td>@p.Carbohydrates</td>
+                    <td>@p.Protein</td>
+                    <td>@p.Energy</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<br/>
+<br/>
+<br/>
+<br/>
+<label>Enter product name part:</label>
+<input type="text" @bind="findThisNamePart"/>
+<button class="btn btn-primary" @onclick="@FindOneProduct">Find product</button>
+
+<br />
+<br />
+<br />
+<br />
+test:
+<label>@findThisNamePart</label>
+<br />
+bool:
+<label>@firstRenderFlag</label>
+
+@code {
+    string findThisNamePart = string.Empty;
+
+    bool firstRenderFlag = true;
+
+    private ProductInfo[]? found;
+
+    public async void FindOneProduct()
+    {
+        ProductInfo[] prod = await prodInfoServ.GetSingleProductInfo(findThisNamePart);
+        found = prod;
+        //findThisNamePart = string.Empty;
+        firstRenderFlag = false;
+    }
+}
