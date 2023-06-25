@@ -1,4 +1,4 @@
-﻿using MealPlannerAPI.Models;
+﻿using MealPlannerAPI.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MealPlannerAPI.Controllers
@@ -17,23 +17,23 @@ namespace MealPlannerAPI.Controllers
             }
         }
 
-        [HttpGet("GetSingleProduct")]
-        public Product GetProduct(string partOfName)
+        [HttpGet("GetSingleProduct/{searchCriteria}")]
+        public List<Product> GetProduct(string searchCriteria)
         {
-            try
-            {
+            //try
+            //{
                 using (MealPlannerDbContext dbCtx = new MealPlannerDbContext())
                 {
-                    var product = dbCtx.Products.Where(p => p.ProductName.Contains(partOfName)).FirstOrDefault();
-                    return product as Product;
+                    var product = dbCtx.Products.Where(p => p.ProductName.Contains(searchCriteria)).ToList<Product>();
+                    return product;
                 }
-            }
-            catch (Exception ex)
-            {
-                Product e = new Product();
-                e.ProductName = ex.Message;
-                return e;
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Product e = new Product();
+            //    e.ProductName = ex.Message;
+            //    return e;
+            //}
         }
 
         [HttpPost("AddNewProduct/{name}/{fat}/{carb}/{prot}/{enrg}")]

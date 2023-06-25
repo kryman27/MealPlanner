@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MealPlannerAPI.Models;
+namespace MealPlannerAPI.Model;
 
 public partial class Category
 {
-    public int Id { get; set; }
+    public int IdCategory { get; set; }
 
     public string? CategoryName { get; set; }
 

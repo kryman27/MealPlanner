@@ -1,6 +1,5 @@
 ﻿@page "/fetchproductfromapi"
 @using MealPlannerUI.Data
-@*@inject WeatherForecastService ForecastService*@
 @inject ProductInfoService ProdService
 
 <PageTitle>MealPlannerUI</PageTitle>
@@ -13,14 +12,9 @@
 {
     <p><em>Loading...</em></p>
 }
-@*else if (_showDbLoadingEx != null)
-{
-    <p><em>Database unavailable, for more information see exception message below:</em></p>
-    <p>@_showDbLoadingEx</p>
-}*@
 else
 {
-    <table class="table">
+    <table class="table" name="aaa">
         <thead>
             <tr>
                 <th>Name</th>
@@ -28,6 +22,7 @@ else
                 <th>Carbohydrates</th>
                 <th>Proteins</th>
                 <th>Energy(per 100g)</th>
+                <th>Select</th>
             </tr>
         </thead>
         <tbody>
@@ -39,7 +34,7 @@ else
                     <td>@prod.Carbohydrates</td>
                     <td>@prod.Protein</td>
                     <td>@prod.Energy</td>
-                    
+                    <td><input type="checkbox" /></td>
                 </tr>
             }
         </tbody>
