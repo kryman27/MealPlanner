@@ -3,7 +3,12 @@
 @inject ProductInfoService prodInfoServ
 
 <h3>Find Product</h3>
-
+<br/>
+<label>Enter product name part:</label>
+<input type="text" value="@findThisNamePart" @oninput="UpdateFindThisNamePart" />
+<button class="btn btn-primary" @onclick="@FindOneProduct">Find product</button>
+<br/>
+<br/>
 <table class="table" name="aaa">
     <thead>
         <tr>
@@ -36,20 +41,13 @@
                     <td>@p.Carbohydrates</td>
                     <td>@p.Protein</td>
                     <td>@p.Energy</td>
+                    <td><input type="checkbox" /></td>
                 </tr>
             }
         }
     </tbody>
 </table>
-<br/>
-<br/>
-<br/>
-<br/>
-<label>Enter product name part:</label>
-<input type="text" @bind="findThisNamePart"/>
-<button class="btn btn-primary" @onclick="@FindOneProduct">Find product</button>
-
-<br />
+@*<br />
 <br />
 <br />
 <br />
@@ -57,7 +55,7 @@ test:
 <label>@findThisNamePart</label>
 <br />
 bool:
-<label>@firstRenderFlag</label>
+<label>@firstRenderFlag</label>*@
 
 @code {
     string findThisNamePart = string.Empty;
@@ -66,11 +64,16 @@ bool:
 
     private ProductInfo[]? found;
 
-    public async void FindOneProduct()
+    private void UpdateFindThisNamePart(ChangeEventArgs e)
+    {
+        findThisNamePart = e.Value.ToString();
+    }
+
+    private async Task FindOneProduct()
     {
         ProductInfo[] prod = await prodInfoServ.GetSingleProductInfo(findThisNamePart);
         found = prod;
-        //findThisNamePart = string.Empty;
+        findThisNamePart = string.Empty;
         firstRenderFlag = false;
     }
 }
