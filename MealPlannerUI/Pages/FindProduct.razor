@@ -1,12 +1,13 @@
 ﻿@page "/findproduct"
 @using MealPlannerUI.Data
 @inject ProductInfoService prodInfoServ
-
-<h3>Find Product</h3>
-<br/>
-<label>Enter product name part:</label>
-<input type="text" value="@findThisNamePart" @oninput="UpdateFindThisNamePart" />
-<button class="btn btn-primary" @onclick="@FindOneProduct">Find product</button>
+<div>
+    <h3>Find Product</h3>
+    <br/>
+    <label>Enter product name part:</label>
+    <input type="text" value="@findThisNamePart" @oninput="UpdateFindThisNamePart" />
+    <button class="btn btn-primary" @onclick="@FindOneProduct">Find product</button>
+</div>
 <br/>
 <br/>
 <table class="table" name="aaa">
