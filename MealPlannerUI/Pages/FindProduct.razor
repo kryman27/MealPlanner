@@ -1,18 +1,23 @@
 ﻿@page "/findproduct"
 @using MealPlannerUI.Data
 @inject ProductInfoService prodInfoServ
+
 <div>
     <h3>Find Product</h3>
     <br/>
     <label>Enter product name part:</label>
     <input type="text" value="@findThisNamePart" @oninput="UpdateFindThisNamePart" />
     <button class="btn btn-primary" @onclick="@FindOneProduct">Find product</button>
+    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+    <button class="btn btn-primary" @onclick="DeleteSelected" >Delete selected items</button>
 </div>
 <br/>
 <br/>
 <table class="table" name="aaa">
     <thead>
         <tr>
+            <th>ID</th>
             <th>Name</th>
             <th>Fat</th>
             <th>Carbohydrates</th>
@@ -37,33 +42,40 @@
             @foreach (var p in found)
             {
                 <tr>
+                    <td>@p.IdProduct</td>
                     <td>@p.ProductName</td>
                     <td>@p.Fat</td>
                     <td>@p.Carbohydrates</td>
                     <td>@p.Protein</td>
                     <td>@p.Energy</td>
-                    <td><input type="checkbox" /></td>
+                    <td><input type="checkbox" @onchange="e => AddToSelectedList(e, p)"/></td>
                 </tr>
             }
         }
     </tbody>
 </table>
-@*<br />
-<br />
-<br />
-<br />
-test:
-<label>@findThisNamePart</label>
-<br />
-bool:
-<label>@firstRenderFlag</label>*@
 
 @code {
+    List<int> selectedItems = new List<int>();
+
     string findThisNamePart = string.Empty;
 
     bool firstRenderFlag = true;
 
     private ProductInfo[]? found;
+
+    private void AddToSelectedList(ChangeEventArgs e, ProductInfo prodId)
+    {
+        if ((bool)e.Value)
+        {
+            selectedItems.Add(prodId.IdProduct);
+        }
+        else
+        {
+            selectedItems.Remove(prodId.IdProduct);
+        }
+        //var x = selectedItems.Count;
+    }
 
     private void UpdateFindThisNamePart(ChangeEventArgs e)
     {
@@ -76,5 +88,12 @@ bool:
         found = prod;
         findThisNamePart = string.Empty;
         firstRenderFlag = false;
+    }
+
+    private async Task DeleteSelected()
+    {
+        var arrayForRequest = selectedItems.ToArray();
+
+        await prodInfoServ.DeleteSelectedProducts(arrayForRequest);
     }
 }

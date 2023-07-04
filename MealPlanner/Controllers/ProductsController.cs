@@ -1,5 +1,10 @@
 ﻿using MealPlannerAPI.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using System.Linq;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace MealPlannerAPI.Controllers
 {
@@ -22,11 +27,11 @@ namespace MealPlannerAPI.Controllers
         {
             //try
             //{
-                using (MealPlannerDbContext dbCtx = new MealPlannerDbContext())
-                {
-                    var product = dbCtx.Products.Where(p => p.ProductName.Contains(searchCriteria)).ToList<Product>();
-                    return product;
-                }
+            using (MealPlannerDbContext dbCtx = new MealPlannerDbContext())
+            {
+                var product = dbCtx.Products.Where(p => p.ProductName.Contains(searchCriteria)).ToList<Product>();
+                return product;
+            }
             //}
             //catch (Exception ex)
             //{
@@ -53,6 +58,29 @@ namespace MealPlannerAPI.Controllers
                 {
                     dbCtx.Products.Add(insertProd);
                     dbCtx.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
+
+        [HttpPost("DeleteSelected")]
+        public void DeleteSelected(string ids)
+        {
+            using(MealPlannerDbContext dbCtx = new MealPlannerDbContext())
+            {
+                try
+                {
+                    var deserializeJson = JsonConvert.DeserializeObject(ids);
+                    foreach (var i in ids)
+                    {
+                        var recordToDelete = dbCtx.Products.FirstOrDefault(x => x.IdProduct == i);
+
+                        dbCtx.Products.Remove(recordToDelete);
+                        dbCtx.SaveChanges();
+                    }
                 }
                 catch (Exception ex)
                 {
