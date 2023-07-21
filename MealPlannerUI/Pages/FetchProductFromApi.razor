@@ -17,6 +17,7 @@ else
     <table class="table" name="aaa">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Name</th>
                 <th>Fat</th>
                 <th>Carbohydrates</th>
@@ -29,6 +30,7 @@ else
             @foreach (var prod in prodInfForUI)
             {
                 <tr>
+                    <td>@prod.IdProduct</td>
                     <td>@prod.ProductName</td>
                     <td>@prod.Fat</td>
                     <td>@prod.Carbohydrates</td>

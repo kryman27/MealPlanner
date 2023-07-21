@@ -65,5 +65,29 @@ namespace MealPlannerUI.Data
 
             return error;
         }
+
+        public async Task DeleteSelectedProducts(int[] toDelete)
+        {
+            using(HttpClient client = new HttpClient())
+            {
+                string deleteApiUrl = "http://localhost:5068/DeleteSelected";
+                string json = JsonConvert.SerializeObject(toDelete);
+                var content = new StringContent(json);
+                var response = await client.PostAsync(deleteApiUrl, content);
+
+                if(response.IsSuccessStatusCode)
+                {
+                    var er = response.RequestMessage.Content.ToString();
+                }
+                else
+                {
+                    var er = response.RequestMessage.Content.ToString();
+                }
+                var request = new HttpRequestMessage(HttpMethod.Post, deleteApiUrl);
+                
+                client.Send(request);
+
+            }
+        }
     }
 }
