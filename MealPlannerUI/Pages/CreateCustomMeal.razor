@@ -1,0 +1,197 @@
+﻿@page "/createcustommeal"
+@using MealPlannerUI.Data
+@inject AddProductService AddNewProduct
+@inject ProductInfoService ProdService
+
+<PageTitle>Add product</PageTitle>
+<h3><i>Create your custom meal</i></h3>
+<br/>
+<b>Select product:</b>
+<br />
+<br />
+<div style="width: 1600px; border-style: solid; border-color: red;">
+    <div style="float:left; width: 75%; border-style: solid; border-color: green;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Amount [g]</th>
+                    <th>Fat</th>
+                    <th>Carbohydrates</th>
+                    <th>Proteins</th>
+                    <th>Energy</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <select style="background-color: transparent" id="productSelector" name="productSelector">
+                            <option value="" disabled selected>Select product</option>
+                            @foreach (var prod in prodInfForUI)
+                            {
+                                <option value="@prod.IdProduct">
+                                    @prod.ProductName
+                                </option>
+                            }
+                        </select>
+                    </td>
+                    <td><input type="number" @bind="tempAmount" /></td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(selectedProductName))
+                        {
+                            @prodInfForUI.FirstOrDefault(p => p.ProductName == selectedProductName)?.Fat
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(selectedProductName))
+                        {
+                            @prodInfForUI.FirstOrDefault(p => p.ProductName == selectedProductName)?.Carbohydrates
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(selectedProductName))
+                        {
+                            @prodInfForUI.FirstOrDefault(p => p.ProductName == selectedProductName)?.Protein
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(selectedProductName))
+                        {
+                            @prodInfForUI.FirstOrDefault(p => p.ProductName == selectedProductName)?.Energy
+                        }
+                    </td>
+                    <td><button><iconify-icon icon="material-symbols:add" @onclick="() => AddToSelectedProducts(tempAmount, new ProductInfo())"></iconify-icon></button></td>
+                </tr>
+                @foreach (var selectedProduct in preparedList)
+                {
+                    <tr>
+                        <td>@selectedProduct.ProductName</td>
+                        <td>@selectedProduct.Amount</td>
+                        <td>@selectedProduct.Fat</td>
+                        <td>@selectedProduct.Carbohydrates</td>
+                        <td>@selectedProduct.Protein</td>
+                        <td>@selectedProduct.Energy</td>
+                        <td>
+                            <button style="margin: auto; display:block;" @onclick="() => RemoveItemFromList(selectedProduct)"><iconify-icon icon="mdi:bin"></iconify-icon></button>
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="6" >
+                        <button class="btn-primary" >Calculate</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+   
+    <div style="float:left; width: 25%; border-style: solid; border-color: black;">
+        <i>Values per 100 g</i>
+        <table style="border-style: solid; border-color: yellow; width: 100%; line-height:200%;">
+            <tr>
+                <td>
+                    Meal name:
+                </td>
+                <td>
+                    <input type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Fat
+                </td>
+                <td>
+                    dummy-text
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Carbohydrates
+                </td>
+                <td>
+                    dummy-text
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Proteins
+                </td>
+                <td>
+                    dummy-text
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Energy
+                </td>
+                <td>
+                    dummy-text
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                    <button class="btn-primary" style="margin: 2px; ">Save</button>
+                </td>
+                <td>
+                    <button class="btn-primary" style="margin: 2px; ">Abort</button>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+    <div style="clear: both;"></div>
+</div>
+
+@code {
+    double tempAmount;
+    protected override async Task OnInitializedAsync()
+    {
+        prodInfForUI = await ProdService.GetProductsInfo();
+    }
+
+    ProductInfo[]? prodInfForUI = new ProductInfo[] { };
+
+    string selectedProductName;
+
+    List<ProductInfo> selectedProducts = new List<ProductInfo>();
+    List<CustomMealCalculator> preparedList = new List<CustomMealCalculator>();
+    //List<CustomMealCalculator> selectedProducts = new List<CustomMealCalculator>();
+
+
+    //private void AddToSelectedProducts(ChangeEventArgs e)
+    //{
+    //    if (e.Value != null && int.TryParse(e.Value.ToString(), out int selectedId))
+    //    {
+    //        // Find the selected product by its ID and add it to the list of selected products
+    //        ProductInfo selectedProduct = prodInfForUI.FirstOrDefault(p => p.IdProduct == selectedId);
+    //        if (selectedProduct != null)
+    //        {
+    //            selectedProducts.Add(selectedProduct);
+    //            selectedProductName = selectedProduct.ProductName;
+    //        }
+    //    }
+    //}
+
+    private void AddToSelectedProducts(double amount, ProductInfo prod)
+    {
+        var temp = new CustomMealCalculator()
+        {
+            Amount = amount,
+            ProductName = "testName",
+            Fat = 11.7,
+            Protein = prod.Protein,
+            Carbohydrates = prod.Carbohydrates,
+            Energy = prod.Energy
+            
+        };
+        preparedList.Add(temp);
+    }
+
+    private void RemoveItemFromList(ProductInfo deleteThisItem)
+    {
+        var itemToRemove = preparedList.Where(item => item.IdProduct == deleteThisItem.IdProduct).FirstOrDefault();
+        preparedList.Remove(itemToRemove);
+    }
+}
