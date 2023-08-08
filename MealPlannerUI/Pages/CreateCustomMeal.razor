@@ -26,60 +26,60 @@
             <tbody>
                 <tr>
                     <td>
-                        <select style="background-color: transparent" id="productSelector" name="productSelector">
+                        <select style="background-color: transparent" @bind="prodSelectorTemp">
                             <option value="" disabled selected>Select product</option>
-                            @foreach (var prod in prodInfForUI)
-                            {
-                                <option value="@prod.IdProduct">
-                                    @prod.ProductName
-                                </option>
-                            }
+                                @foreach (var prod in prodInfForUI)
+                                {
+                                    <option value="@prod.ProductName">
+                                        @prod.ProductName
+                                    </option>
+                                }
                         </select>
                     </td>
                     <td><input type="number" @bind="tempAmount" /></td>
                     <td>
-                        @if (!string.IsNullOrEmpty(selectedProductName))
+                        @if (!string.IsNullOrEmpty(prodSelectorTemp))
                         {
-                            @prodInfForUI.FirstOrDefault(p => p.ProductName == selectedProductName)?.Fat
+                            @prodInfForUI.FirstOrDefault(p => p.ProductName == prodSelectorTemp)?.Fat
                         }
                     </td>
                     <td>
-                        @if (!string.IsNullOrEmpty(selectedProductName))
+                        @if (!string.IsNullOrEmpty(prodSelectorTemp))
                         {
-                            @prodInfForUI.FirstOrDefault(p => p.ProductName == selectedProductName)?.Carbohydrates
+                            @prodInfForUI.FirstOrDefault(p => p.ProductName == prodSelectorTemp)?.Carbohydrates
                         }
                     </td>
                     <td>
-                        @if (!string.IsNullOrEmpty(selectedProductName))
+                        @if (!string.IsNullOrEmpty(prodSelectorTemp))
                         {
-                            @prodInfForUI.FirstOrDefault(p => p.ProductName == selectedProductName)?.Protein
+                            @prodInfForUI.FirstOrDefault(p => p.ProductName == prodSelectorTemp)?.Protein
                         }
                     </td>
                     <td>
-                        @if (!string.IsNullOrEmpty(selectedProductName))
+                        @if (!string.IsNullOrEmpty(prodSelectorTemp))
                         {
-                            @prodInfForUI.FirstOrDefault(p => p.ProductName == selectedProductName)?.Energy
+                            @prodInfForUI.FirstOrDefault(p => p.ProductName == prodSelectorTemp)?.Energy
                         }
                     </td>
-                    <td><button><iconify-icon icon="material-symbols:add" @onclick="() => AddToSelectedProducts(tempAmount, new ProductInfo())"></iconify-icon></button></td>
+                    <td><button><iconify-icon icon="material-symbols:add" @onclick="() => AddToSelectedProducts(tempAmount, prodInfForUI.FirstOrDefault(p => p.ProductName == prodSelectorTemp))"></iconify-icon></button></td>
                 </tr>
-                @foreach (var selectedProduct in preparedList)
-                {
-                    <tr>
-                        <td>@selectedProduct.ProductName</td>
-                        <td>@selectedProduct.Amount</td>
-                        <td>@selectedProduct.Fat</td>
-                        <td>@selectedProduct.Carbohydrates</td>
-                        <td>@selectedProduct.Protein</td>
-                        <td>@selectedProduct.Energy</td>
-                        <td>
-                            <button style="margin: auto; display:block;" @onclick="() => RemoveItemFromList(selectedProduct)"><iconify-icon icon="mdi:bin"></iconify-icon></button>
-                        </td>
-                    </tr>
-                }
+                    @foreach (var selectedProduct in preparedList)
+                    {
+                        <tr>
+                            <td>@selectedProduct.ProductName</td>
+                            <td>@selectedProduct.Amount</td>
+                            <td>@selectedProduct.Fat</td>
+                            <td>@selectedProduct.Carbohydrates</td>
+                            <td>@selectedProduct.Protein</td>
+                            <td>@selectedProduct.Energy</td>
+                            <td>
+                                <button style="margin: auto; display:block;" @onclick="() => RemoveItemFromList(selectedProduct)"><iconify-icon icon="mdi:bin"></iconify-icon></button>
+                            </td>
+                        </tr>
+                    }
                 <tr>
                     <td colspan="6" >
-                        <button class="btn-primary" >Calculate</button>
+                        <button class="btn-primary" @onclick="() => CustomMealCalculator.CalculateCustomMeal(preparedList)">Calculate</button>
                     </td>
                 </tr>
             </tbody>
@@ -94,7 +94,7 @@
                     Meal name:
                 </td>
                 <td>
-                    <input type="text" />
+                    <input type="text" @bind="customProduct.ProductName"/>
                 </td>
             </tr>
             <tr>
@@ -102,7 +102,10 @@
                     Fat
                 </td>
                 <td>
-                    dummy-text
+                    @if (customProduct.Fat != null)
+                    {
+                        @customProduct.Fat
+                    }
                 </td>
             </tr>
             <tr>
@@ -110,7 +113,10 @@
                     Carbohydrates
                 </td>
                 <td>
-                    dummy-text
+                    @if (customProduct.Carbohydrates != null)
+                    {
+                        @customProduct.Carbohydrates
+                    }
                 </td>
             </tr>
             <tr>
@@ -118,7 +124,10 @@
                     Proteins
                 </td>
                 <td>
-                    dummy-text
+                    @if (customProduct.Protein != null)
+                    {
+                        @customProduct.Protein
+                    }
                 </td>
             </tr>
             <tr>
@@ -126,19 +135,21 @@
                     Energy
                 </td>
                 <td>
-                    dummy-text
+                    @if (customProduct.Energy != null)
+                    {
+                        @customProduct.Energy
+                    }
                 </td>
             </tr>
             
             <tr>
                 <td>
-                    <button class="btn-primary" style="margin: 2px; ">Save</button>
+                    <button class="btn-primary" style="margin: 2px;" @onclick="AddCustomProductToDb">Save</button>
                 </td>
                 <td>
-                    <button class="btn-primary" style="margin: 2px; ">Abort</button>
+                    <button class="btn-primary" style="margin: 2px;" @onclick="ClearCustomProduct">Clear</button>
                 </td>
             </tr>
-
         </table>
     </div>
     <div style="clear: both;"></div>
@@ -146,52 +157,57 @@
 
 @code {
     double tempAmount;
+    string prodSelectorTemp = String.Empty;
+    ProductInfo[]? prodInfForUI = new ProductInfo[] { };
+    public static ProductInfo customProduct = new ProductInfo();
+
     protected override async Task OnInitializedAsync()
     {
         prodInfForUI = await ProdService.GetProductsInfo();
     }
 
-    ProductInfo[]? prodInfForUI = new ProductInfo[] { };
-
-    string selectedProductName;
-
-    List<ProductInfo> selectedProducts = new List<ProductInfo>();
     List<CustomMealCalculator> preparedList = new List<CustomMealCalculator>();
-    //List<CustomMealCalculator> selectedProducts = new List<CustomMealCalculator>();
-
-
-    //private void AddToSelectedProducts(ChangeEventArgs e)
-    //{
-    //    if (e.Value != null && int.TryParse(e.Value.ToString(), out int selectedId))
-    //    {
-    //        // Find the selected product by its ID and add it to the list of selected products
-    //        ProductInfo selectedProduct = prodInfForUI.FirstOrDefault(p => p.IdProduct == selectedId);
-    //        if (selectedProduct != null)
-    //        {
-    //            selectedProducts.Add(selectedProduct);
-    //            selectedProductName = selectedProduct.ProductName;
-    //        }
-    //    }
-    //}
 
     private void AddToSelectedProducts(double amount, ProductInfo prod)
     {
         var temp = new CustomMealCalculator()
         {
             Amount = amount,
-            ProductName = "testName",
-            Fat = 11.7,
+            ProductName = prod.ProductName,
+            Fat = prod.Fat,
             Protein = prod.Protein,
             Carbohydrates = prod.Carbohydrates,
             Energy = prod.Energy
-            
+
         };
         preparedList.Add(temp);
+        tempAmount = 0.0;
+        prodSelectorTemp = String.Empty;
     }
 
     private void RemoveItemFromList(ProductInfo deleteThisItem)
     {
         var itemToRemove = preparedList.Where(item => item.IdProduct == deleteThisItem.IdProduct).FirstOrDefault();
         preparedList.Remove(itemToRemove);
+    }
+
+    private void ClearCustomProduct()
+    {
+        customProduct.ProductName = String.Empty;
+        customProduct.Carbohydrates = 0.0;
+        customProduct.Fat = 0.0;
+        customProduct.Protein = 0.0;
+        customProduct.Energy = 0.0;
+    }
+
+    private void AddCustomProductToDb()
+    {
+        AddNewProduct.AddProductToDb(customProduct.ProductName, (double)customProduct.Fat, (double)customProduct.Carbohydrates, (double)customProduct.Protein, (double)customProduct.Energy);
+        customProduct.ProductName = String.Empty;
+        customProduct.Carbohydrates = 0.0;
+        customProduct.Fat = 0.0;
+        customProduct.Protein = 0.0;
+        customProduct.Energy = 0.0;
+        preparedList.Clear();
     }
 }
