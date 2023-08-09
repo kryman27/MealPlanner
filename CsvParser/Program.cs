@@ -38,7 +38,7 @@ namespace CsvParser
             string dbQueryPath = @"C:\Users\user\source\repos\MealPlanner\dbQuery.sql";
             foreach (var entry in entries)
             {
-                string query = $"INSERT INTO Products (product_name, fat, protein, carbohydrates, energy) VALUES('{entry.Product.ToString(CultureInfo.InvariantCulture)}', {entry.Fat.ToString(CultureInfo.InvariantCulture)}, {entry.Carbohydrates.ToString(CultureInfo.InvariantCulture)}, {entry.Proteins.ToString(CultureInfo.InvariantCulture)}, {entry.Energy.ToString(CultureInfo.InvariantCulture)})";
+                string query = $"INSERT INTO Products (product_name, fat, carbohydrates, protein, energy) VALUES('{entry.Product.ToString(CultureInfo.InvariantCulture)}', {entry.Fat.ToString(CultureInfo.InvariantCulture)}, {entry.Carbohydrates.ToString(CultureInfo.InvariantCulture)}, {entry.Proteins.ToString(CultureInfo.InvariantCulture)}, {entry.Energy.ToString(CultureInfo.InvariantCulture)})";
                 Console.WriteLine(query);
                 try
                 {
