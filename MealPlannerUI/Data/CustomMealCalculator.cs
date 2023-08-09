@@ -12,12 +12,11 @@ namespace MealPlannerUI.Data
             double? totalCarbs = givenList.Sum(p => p.Carbohydrates);
             double? totalProtein = givenList.Sum(p => p.Protein);
             double? totalEnergy = givenList.Sum(p => p.Energy);
-
-            CreateCustomMeal.customProduct.Carbohydrates = Math.Round((double)((totalCarbs * 100)/totalMass), 2);
-            CreateCustomMeal.customProduct.Fat = Math.Round((double)((totalFat * 100) / totalMass), 2);
-            CreateCustomMeal.customProduct.Protein = Math.Round((double)((totalProtein * 100) / totalMass), 2);
-            CreateCustomMeal.customProduct.Energy = Math.Round((double)((totalEnergy * 100) / totalMass), 2);
-
+            
+            CreateCustomMeal.customProduct.Carbohydrates = Math.Round((double)((totalCarbs * 100.0)/totalMass), 2);
+            CreateCustomMeal.customProduct.Fat = Math.Round((double)((totalFat * 100.0) / totalMass), 2);
+            CreateCustomMeal.customProduct.Protein = Math.Round((double)((totalProtein * 100.0) / totalMass), 2);
+            CreateCustomMeal.customProduct.Energy = Math.Round((double)((totalEnergy * 100.0) / totalMass), 2);
         }
     }
 }
