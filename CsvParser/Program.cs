@@ -1,59 +1,20 @@
-﻿using System.Globalization;
+﻿using CsvParser;
 
-namespace CsvParser
+namespace FileParser
 {
-    public class CsvParser
+    public class FileParser
     {
         public static void Main()
         {
-            List<SingleEntry> entries = new List<SingleEntry>();
-
-            string filePath = @"C:\Users\user\source\repos\MealPlanner\DbContent.csv";
-            try
-            {
-                string[] fileContent = File.ReadAllLines(filePath);
-                foreach (string line in fileContent)
-                {
-                    string[] values = line.Split(',');
-
-                    try
-                    {
-                        entries.Add(new SingleEntry(values[0],
-                                                    double.Parse(values[1], CultureInfo.InvariantCulture),
-                                                    double.Parse(values[2], CultureInfo.InvariantCulture),
-                                                    double.Parse(values[3], CultureInfo.InvariantCulture),
-                                                    double.Parse(values[4], CultureInfo.InvariantCulture)));
-                    }
-                    catch (FormatException ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-
-            string dbQueryPath = @"C:\Users\user\source\repos\MealPlanner\dbQuery.sql";
-            foreach (var entry in entries)
-            {
-                string query = $"INSERT INTO Products (product_name, fat, carbohydrates, protein, energy) VALUES('{entry.Product.ToString(CultureInfo.InvariantCulture)}', {entry.Fat.ToString(CultureInfo.InvariantCulture)}, {entry.Carbohydrates.ToString(CultureInfo.InvariantCulture)}, {entry.Proteins.ToString(CultureInfo.InvariantCulture)}, {entry.Energy.ToString(CultureInfo.InvariantCulture)})";
-                Console.WriteLine(query);
-                try
-                {
-                    using (StreamWriter sw = File.AppendText(dbQueryPath))
-                    {
-                        sw.WriteLine(query);
-                    }
-                }
-                catch (IOException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine("Exit code: 1");
-                    System.Environment.Exit(1);
-                }
-            }
+            List<ProductDataModel> entries = new List<ProductDataModel>();
+            string directoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DbSourceFiles");
+            var directoryChecker = new DirectoryChecker(directoryPath);
+            directoryChecker.CheckFilesInDirectory();
+            entries.AddRange(directoryChecker.ExecuteStrategy());
+            string dbQueryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DbPreparedQueries", new string("query_" + DateTime.Now.ToString("yyyyMMdd_HHmm") + ".txt"));
+            var queryPreparer = new QueryPreparer();
+            queryPreparer.PrepareQuery(entries, dbQueryPath);
+            File.Delete(directoryChecker.InputFilePath);
         }
     }
 }

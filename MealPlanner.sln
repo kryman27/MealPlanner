@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MealPlannerAPI", "MealPlanner\MealPlannerAPI.csproj", "{C222E084-60B5-4FA4-8F79-04349FFD6A7D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvParser", "CsvParser\CsvParser.csproj", "{214B4CED-E937-4646-8224-298E5E4E6030}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileParser", "CsvParser\FileParser.csproj", "{214B4CED-E937-4646-8224-298E5E4E6030}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MealPlannerUI", "MealPlannerUI\MealPlannerUI.csproj", "{682DB399-2D7F-47CE-AF7B-FDF6CBEFFCEB}"
 EndProject
