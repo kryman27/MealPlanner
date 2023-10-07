@@ -364,3 +364,5 @@ FodyWeavers.xsd
 /dbQuery.sql
 /CsvParser/testFile.csv
 /CsvParser/JsonTestFile.json
+/CREATE TABLE PRODUCTS.sql
+/SQLQuery4.sql
