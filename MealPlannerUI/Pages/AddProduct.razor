@@ -29,6 +29,7 @@
         </tbody>
     </table>
 <button class="btn btn-primary" @onclick="AddProductToDb">Add product do database</button>
+<Popup @ref="popupRef" />
 
 
 @code {
@@ -47,5 +48,12 @@
         prots = 0.0;
         nrg = 0.0;
 
+        ShowPopup();
+    }
+
+    private Popup popupRef;
+    private void ShowPopup()
+    {
+        popupRef.Show("Product added succesfully");
     }
 }

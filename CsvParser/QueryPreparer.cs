@@ -8,7 +8,7 @@ namespace FileParser
         {
             foreach (var entry in data)
             {
-                string query = $"INSERT INTO Products (product_name, fat, carbohydrates, protein, energy)" +
+                string query = $"INSERT INTO Products (ProductName, Fat, Carbohydrates, Protein, Energy)" +
                     $" VALUES('{entry.ProductName.ToString(CultureInfo.InvariantCulture)}'," +
                     $" {entry.Fat.ToString(CultureInfo.InvariantCulture)}," +
                     $" {entry.Carbohydrates.ToString(CultureInfo.InvariantCulture)}," +

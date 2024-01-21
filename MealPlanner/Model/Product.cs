@@ -1,29 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace MealPlannerAPI.Model;
 
-namespace MealPlannerAPI.Model;
-
-public partial class Product
+public class Product
 {
-    public int IdProduct { get; set; }
+    public Product()
+    {
+
+    }
+    public Product(int productId, string productName, decimal? fat, decimal? carbohydrates, decimal? protein, decimal? energy)
+    {
+        ProductId = productId;
+        ProductName = productName;
+        Fat = fat;
+        Carbohydrates = carbohydrates;
+        Protein = protein;
+        Energy = energy;
+    }
+
+    public int ProductId { get; set; }
 
     public string ProductName { get; set; } = null!;
 
-    public int? IdCategory { get; set; }
+    public decimal? Fat { get; set; }
 
-    public int? IdBrand { get; set; }
+    public decimal? Carbohydrates { get; set; }
 
-    public double? Fat { get; set; }
+    public decimal? Protein { get; set; }
 
-    public double? Carbohydrates { get; set; }
+    public decimal? Energy { get; set; }
 
-    public double? Protein { get; set; }
-
-    public double? Energy { get; set; }
-
-    public virtual ICollection<DailyMeal> DailyMeals { get; set; } = new List<DailyMeal>();
-
-    public virtual Brand? IdBrandNavigation { get; set; }
-
-    public virtual Category? IdCategoryNavigation { get; set; }
+    public virtual ICollection<MealDetail> MealDetails { get; set; } = new List<MealDetail>();
 }

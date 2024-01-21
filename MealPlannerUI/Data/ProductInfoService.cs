@@ -1,20 +1,35 @@
 ﻿using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace MealPlannerUI.Data
 {
     public class ProductInfoService
     {
+        //private readonly TokenBearerService TokenBearerSvc;
         public static string dbLoadingExMsg = "unknown error";
+        public readonly string apiUrl = "http://localhost:5068/api";
+        //public readonly string apiUrl = "http://localhost:5000";
+
+        public ProductInfoService()
+        {
+            //TokenBearerSvc = new();
+            //TokenBearerSvc.RetreiveToken("MealPlannerAPI");
+        }
+
         public async Task<ProductInfo[]> GetProductsInfo()
         {
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    string productsApiUrl = "http://localhost:5068/GetProducts";
+                    string productsApiUrl = $"{apiUrl}/products";
+                    
+                    var request = new HttpRequestMessage(HttpMethod.Get, productsApiUrl);
+                    //request.Headers.Add("Authorization", $"Bearer {TokenBearerSvc.Token}");
+                    
+                    var response = await client.SendAsync(request);
 
-                    HttpResponseMessage response = await client.GetAsync(productsApiUrl);
-                    string rawData = await response.Content.ReadAsStringAsync();
+                    string rawData = response.Content.ReadAsStringAsync().Result;
 
                     var productInfoToDisplay = JsonConvert.DeserializeObject<ProductInfo[]>(rawData);
 
@@ -36,17 +51,20 @@ namespace MealPlannerUI.Data
             return error;
         }
 
-        public async Task<ProductInfo[]> GetSingleProductInfo(string searchCriteria)
+        public async Task<List<ProductInfo>> GetSingleProductInfo(string searchName)
         {
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    string productApiUrl = $"http://localhost:5068/GetSingleProduct/{searchCriteria}";
-                    HttpResponseMessage response = await client.GetAsync(productApiUrl);
-                    string rawData = await response.Content.ReadAsStringAsync();
+                    string productApiUrl = $"{apiUrl}/product/{searchName}";
+                    var request = new HttpRequestMessage(HttpMethod.Get, productApiUrl);
+                    //request.Headers.Add("Authorization", $"Bearer {TokenBearerSvc.Token}");
 
-                    var productInfoToDisplay = JsonConvert.DeserializeObject<ProductInfo[]>(rawData);
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    string rawData = response.Content.ReadAsStringAsync().Result;
+
+                    var productInfoToDisplay = JsonConvert.DeserializeObject<List<ProductInfo>>(rawData);
 
                     return productInfoToDisplay;
                 }
@@ -55,7 +73,7 @@ namespace MealPlannerUI.Data
             {
                 dbLoadingExMsg = ex.Message.ToString();
             }
-            ProductInfo[] error = new ProductInfo[1];
+            List<ProductInfo> error = new List<ProductInfo> { new ProductInfo { ProductName = dbLoadingExMsg } };
             {
                 new ProductInfo
                 {
@@ -66,27 +84,23 @@ namespace MealPlannerUI.Data
             return error;
         }
 
-        public async Task DeleteSelectedProducts(int[] toDelete)
+        public async Task<HttpResponseMessage> DeleteSelectedProduct(int toDelete)
         {
             using(HttpClient client = new HttpClient())
             {
-                string deleteApiUrl = "http://localhost:5068/DeleteSelected";
-                string json = JsonConvert.SerializeObject(toDelete);
-                var content = new StringContent(json);
-                var response = await client.PostAsync(deleteApiUrl, content);
-
-                if(response.IsSuccessStatusCode)
-                {
-                    var er = response.RequestMessage.Content.ToString();
-                }
-                else
-                {
-                    var er = response.RequestMessage.Content.ToString();
-                }
-                var request = new HttpRequestMessage(HttpMethod.Post, deleteApiUrl);
+                string deleteApiUrl = $"{apiUrl}/product/{toDelete}";
                 
-                client.Send(request);
+                var response = await client.DeleteAsync(deleteApiUrl);
 
+                return response;
+                //if (response.IsSuccessStatusCode)
+                //{
+                //    var er = response.RequestMessage.Content.ToString();
+                //}
+                //else
+                //{
+                //    var er = response.RequestMessage.Content.ToString();
+                //}
             }
         }
     }

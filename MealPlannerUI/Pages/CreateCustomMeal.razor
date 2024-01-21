@@ -9,7 +9,7 @@
 <b>Select product:</b>
 <br />
 <br />
-<div style="width: 1600px;">
+<div style="width: 1400px;">
     <div style="float:left; width: 75%;">
         <table class="table">
             <thead>
@@ -186,7 +186,7 @@
 
     private void RemoveItemFromList(ProductInfo deleteThisItem)
     {
-        var itemToRemove = preparedList.Where(item => item.IdProduct == deleteThisItem.IdProduct).FirstOrDefault();
+        var itemToRemove = preparedList.Where(item => item.ProductId == deleteThisItem.ProductId).FirstOrDefault();
         preparedList.Remove(itemToRemove);
     }
 

@@ -5,9 +5,22 @@ namespace MealPlannerAPI.Model;
 
 public partial class UserPreference
 {
-    public int IdUserpreference { get; set; }
+    public UserPreference(int userId, string userName, int? dailyEnrgGoalLow, int? dailyEnrgGoalHigh, int? dailyFatGoal, int? dailyCarbsGoal, int? dailyProteinsGoal)
+    {
+        UserId = userId;
+        UserName = userName;
+        DailyEnrgGoalLow = dailyEnrgGoalLow;
+        DailyEnrgGoalHigh = dailyEnrgGoalHigh;
+        DailyFatGoal = dailyFatGoal;
+        DailyCarbsGoal = dailyCarbsGoal;
+        DailyProteinsGoal = dailyProteinsGoal;
+    }
 
-    public string UserName { get; set; } = null!;
+    public int UserPreferenceId { get; set; }
+
+    public int UserId { get; set; }
+
+    public string UserName { get; set; }
 
     public int? DailyEnrgGoalLow { get; set; }
 

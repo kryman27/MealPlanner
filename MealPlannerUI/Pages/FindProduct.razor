@@ -10,7 +10,7 @@
     <button class="btn btn-primary" @onclick="@FindOneProduct">Find product</button>
     &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
     &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-    <button class="btn btn-primary" @onclick="DeleteSelected" >Delete selected items</button>
+    
 </div>
 <br/>
 <br/>
@@ -23,7 +23,7 @@
             <th>Carbohydrates</th>
             <th>Proteins</th>
             <th>Energy(per 100g)</th>
-            <th>Select</th>
+            
         </tr>
     </thead>
     <tbody>
@@ -35,6 +35,8 @@
                 <td>null</td>
                 <td>null</td>
                 <td>null</td>
+                <td>null</td>
+                <td></td>
             </tr>
         }
         else
@@ -42,13 +44,13 @@
             @foreach (var p in found)
             {
                 <tr>
-                    <td>@p.IdProduct</td>
+                    <td>@p.ProductId</td>
                     <td>@p.ProductName</td>
                     <td>@p.Fat</td>
                     <td>@p.Carbohydrates</td>
                     <td>@p.Protein</td>
                     <td>@p.Energy</td>
-                    <td><input type="checkbox" @onchange="e => AddToSelectedList(e, p)"/></td>
+                    <td><button class="btn btn-primary" @onclick="() => DeleteSelected(p.ProductId)">Delete item</button></td>
                 </tr>
             }
         }
@@ -56,26 +58,11 @@
 </table>
 
 @code {
-    List<int> selectedItems = new List<int>();
-
     string findThisNamePart = string.Empty;
 
     bool firstRenderFlag = true;
 
-    private ProductInfo[]? found;
-
-    private void AddToSelectedList(ChangeEventArgs e, ProductInfo prodId)
-    {
-        if ((bool)e.Value)
-        {
-            selectedItems.Add(prodId.IdProduct);
-        }
-        else
-        {
-            selectedItems.Remove(prodId.IdProduct);
-        }
-        //var x = selectedItems.Count;
-    }
+    private List<ProductInfo> found;
 
     private void UpdateFindThisNamePart(ChangeEventArgs e)
     {
@@ -84,16 +71,39 @@
 
     private async Task FindOneProduct()
     {
-        ProductInfo[] prod = await prodInfoServ.GetSingleProductInfo(findThisNamePart);
-        found = prod;
-        findThisNamePart = string.Empty;
-        firstRenderFlag = false;
+        try
+        {
+            var prod = await prodInfoServ.GetSingleProductInfo(findThisNamePart);
+            if (prod.Count != 0)
+            {
+                found = prod;
+                findThisNamePart = string.Empty;
+                firstRenderFlag = false;
+            }
+            else
+            {
+                found.Add(new ProductInfo { ProductName = "Product was not found" });
+                findThisNamePart = string.Empty;
+                firstRenderFlag = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
-
-    private async Task DeleteSelected()
+    private async Task DeleteSelected(int id)
     {
-        var arrayForRequest = selectedItems.ToArray();
+        var test = found;
+        var response = await prodInfoServ.DeleteSelectedProduct(id);
 
-        await prodInfoServ.DeleteSelectedProducts(arrayForRequest);
+        if(response.IsSuccessStatusCode == true)
+        {
+            found.Remove(found.FirstOrDefault(x => x.ProductId == id));
+        }
+        else
+        {
+            found.FirstOrDefault(x => x.ProductId == id).ProductName = "Something gone wrong. Refresh and try again";
+        }
     }
 }

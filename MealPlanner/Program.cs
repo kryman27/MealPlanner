@@ -1,27 +1,45 @@
+using MealPlannerAPI;
+using MealPlannerAPI.Database;
+using MealPlannerAPI.Model;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+internal class Program
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    private static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
+
+        // Add services to the container.
+        builder.Services.AddControllers();
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+
+        Configurer.ConfigureGraphQL(builder);
+        Configurer.ConfigureAuthenticationAndAuthorization(builder);
+
+        builder.Services.AddScoped<IAuthService, AuthService>();
+
+        var logger = Configurer.ConfigureLogger(builder);
+
+        var app = builder.Build();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        //app.UseAuthentication();
+        //app.UseAuthorization();
+
+        app.MapGraphQL();
+
+        app.MapControllers();
+
+        logger.LogInformation("API has been started");
+
+        app.Run();
+    }
 }
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
-
-//Scaffold - DbContext "Server=(localdb)\MSSQLLocalDB;Database=MyDbKM;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer - OutputDir Model

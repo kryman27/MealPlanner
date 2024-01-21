@@ -2,7 +2,7 @@
 {
     public class ProductInfo
     {
-        public int IdProduct { get; set; }
+        public int ProductId { get; set; }
 
         public string ProductName { get; set; } = null!;
 
