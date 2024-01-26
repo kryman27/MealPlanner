@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace MealPlannerAPI.Model;
+﻿namespace ModelsLib.Model;
 
 public partial class Meal
 {
     public Meal()
     {
-        
+
     }
     public Meal(int mealId, DateTime? mealDate, string mealName, ICollection<MealDetail> mealDetails)
     {
@@ -19,7 +14,7 @@ public partial class Meal
         MealDetails = mealDetails;
     }
 
-    
+
     public int MealId { get; set; }
 
     public DateTime? MealDate { get; set; }

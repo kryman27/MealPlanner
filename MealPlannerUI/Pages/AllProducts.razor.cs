@@ -1,10 +1,10 @@
-using MealPlannerUI.Data;
+using ModelsLib.Model;
 
 namespace MealPlannerUI.Pages
 {
-    public partial class FetchProductFromApi
+    public partial class AllProducts
     {
-        private ProductInfo[]? prodInfForUI;
+        private Product[]? prodInfForUI;
         protected override async Task OnInitializedAsync()
         {
             prodInfForUI = await ProdService.GetProductsInfo();

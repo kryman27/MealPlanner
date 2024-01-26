@@ -1,7 +1,5 @@
 using MealPlannerAPI;
-using MealPlannerAPI.Database;
-using MealPlannerAPI.Model;
-using Microsoft.EntityFrameworkCore;
+using MealPlannerAPI.Authentication;
 
 internal class Program
 {

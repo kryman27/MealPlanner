@@ -1,0 +1,57 @@
+﻿@page "/paginated-products"
+@using MealPlannerUI.Data
+@inject ProductService ProdService
+
+<PageTitle>MealPlannerUI</PageTitle>
+
+<h3>MealPlanner available products</h3>
+
+@if (prodInfForUI == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table" name="aaa">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Fat</th>
+                <th>Carbohydrates</th>
+                <th>Proteins</th>
+                <th>Energy(per 100g)</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var prod in prodInfForUI)
+            {
+                <tr>
+                    <td>@prod.ProductId</td>
+                    <td>@prod.ProductName</td>
+                    <td>@prod.Fat</td>
+                    <td>@prod.Carbohydrates</td>
+                    <td>@prod.Protein</td>
+                    <td>@prod.Energy</td>
+                    
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <i>Results per page:</i>
+    <select style="background-color: lightgray" @bind="ProductsNumber">
+        <option value="" disabled selected>Products per page</option>
+        <option value="5">5</option>
+        <option value="10" selected>10</option>
+        <option value="20">20</option>
+    </select>
+    <br />
+    <br />
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <MudPagination Color="Color.Primary" Count="totalPageCount" @bind-Selected="PageNumber" />
+    </div>
+}
+
+

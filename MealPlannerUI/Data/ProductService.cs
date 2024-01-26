@@ -1,22 +1,23 @@
-﻿using Newtonsoft.Json;
+﻿using ModelsLib.Model;
+using Newtonsoft.Json;
 using System.Net.Http.Headers;
 
 namespace MealPlannerUI.Data
 {
-    public class ProductInfoService
+    public class ProductService
     {
         //private readonly TokenBearerService TokenBearerSvc;
         public static string dbLoadingExMsg = "unknown error";
-        public readonly string apiUrl = "http://localhost:5068/api";
-        //public readonly string apiUrl = "http://localhost:5000";
+        //public readonly string apiUrl = "http://localhost:5068/api";
+        public readonly string apiUrl = "http://localhost:5000/api";
 
-        public ProductInfoService()
+        public ProductService()
         {
             //TokenBearerSvc = new();
             //TokenBearerSvc.RetreiveToken("MealPlannerAPI");
         }
 
-        public async Task<ProductInfo[]> GetProductsInfo()
+        public async Task<Product[]> GetProductsInfo()
         {
             try
             {
@@ -31,7 +32,7 @@ namespace MealPlannerUI.Data
 
                     string rawData = response.Content.ReadAsStringAsync().Result;
 
-                    var productInfoToDisplay = JsonConvert.DeserializeObject<ProductInfo[]>(rawData);
+                    var productInfoToDisplay = JsonConvert.DeserializeObject<Product[]>(rawData);
 
                     return productInfoToDisplay;
                 }
@@ -41,9 +42,9 @@ namespace MealPlannerUI.Data
                 dbLoadingExMsg = ex.Message.ToString();
             }
 
-            ProductInfo[] error = new ProductInfo[1]
+            Product[] error = new Product[1]
             {
-                new ProductInfo
+                new Product
                 {
                     ProductName = dbLoadingExMsg
                 }
@@ -51,7 +52,44 @@ namespace MealPlannerUI.Data
             return error;
         }
 
-        public async Task<List<ProductInfo>> GetSingleProductInfo(string searchName)
+        public async Task<AnswerModel<Product[]>> GetPaginatedProducts(int productsPerPage, int pageNumber)
+        {
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    string productsApiUrl = $"{apiUrl}/paginated-products/{productsPerPage}/{pageNumber}";
+
+                    var request = new HttpRequestMessage(HttpMethod.Get, productsApiUrl);
+                    //request.Headers.Add("Authorization", $"Bearer {TokenBearerSvc.Token}");
+
+                    var response = await client.SendAsync(request);
+
+                    string rawData = response.Content.ReadAsStringAsync().Result;
+
+                    var productInfoToDisplay = JsonConvert.DeserializeObject<Product[]>(rawData);
+
+                    var currentNumberOfPages = response.Headers.NonValidated.FirstOrDefault(h => h.Key == "X-number-of-pages").Value.ToString();
+
+                    return new AnswerModel<Product[]>(productInfoToDisplay, currentNumberOfPages);
+                }
+            }
+            catch (Exception ex)
+            {
+                dbLoadingExMsg = ex.Message.ToString();
+            }
+
+            var productInfoToDisplayError = new Product[1];
+            {
+                new Product
+                {
+                    ProductName = dbLoadingExMsg
+                };
+            };
+            return new AnswerModel<Product[]>(productInfoToDisplayError, "error");
+        }
+
+        public async Task<List<Product>> GetSingleProductInfo(string searchName)
         {
             try
             {
@@ -64,7 +102,7 @@ namespace MealPlannerUI.Data
                     HttpResponseMessage response = await client.SendAsync(request);
                     string rawData = response.Content.ReadAsStringAsync().Result;
 
-                    var productInfoToDisplay = JsonConvert.DeserializeObject<List<ProductInfo>>(rawData);
+                    var productInfoToDisplay = JsonConvert.DeserializeObject<List<Product>>(rawData);
 
                     return productInfoToDisplay;
                 }
@@ -73,9 +111,9 @@ namespace MealPlannerUI.Data
             {
                 dbLoadingExMsg = ex.Message.ToString();
             }
-            List<ProductInfo> error = new List<ProductInfo> { new ProductInfo { ProductName = dbLoadingExMsg } };
+            List<Product> error = new List<Product> { new Product { ProductName = dbLoadingExMsg } };
             {
-                new ProductInfo
+                new Product
                 {
                     ProductName = dbLoadingExMsg
                 };

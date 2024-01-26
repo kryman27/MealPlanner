@@ -1,6 +1,7 @@
 ﻿@page "/findproduct"
 @using MealPlannerUI.Data
-@inject ProductInfoService prodInfoServ
+@using ModelsLib.Model;
+@inject ProductService prodInfoServ
 
 <div>
     <h3>Find Product</h3>
@@ -62,7 +63,7 @@
 
     bool firstRenderFlag = true;
 
-    private List<ProductInfo> found;
+    private List<Product> found;
 
     private void UpdateFindThisNamePart(ChangeEventArgs e)
     {
@@ -82,7 +83,7 @@
             }
             else
             {
-                found.Add(new ProductInfo { ProductName = "Product was not found" });
+                found.Add(new Product { ProductName = "Product was not found" });
                 findThisNamePart = string.Empty;
                 firstRenderFlag = false;
             }
@@ -103,7 +104,7 @@
         }
         else
         {
-            found.FirstOrDefault(x => x.ProductId == id).ProductName = "Something gone wrong. Refresh and try again";
+            found.FirstOrDefault(x => x.ProductId == id).ProductName = "Something went wrong. Refresh and try again";
         }
     }
 }

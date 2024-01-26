@@ -1,13 +1,12 @@
 ﻿using EnumStringValues;
 using MealPlannerAPI.Database;
-using MealPlannerAPI.Model;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using ModelsLib.Model;
 
 namespace MealPlannerAPI.Controllers
 {
     [ApiController]
-    [Route("api/user-preferences")]
+    [Route("api/")]
     public class UserPreferencesController : ControllerBase
     {
         private readonly ILogger<UserPreferencesController> logger;
@@ -33,7 +32,7 @@ namespace MealPlannerAPI.Controllers
         {
             UserPreference userPreference = new(userId, userName, dailyEnergyGoalLow, dailyEnergyGoalHigh, dailyFatGoal, dailyCarbsGoal, dailyProteinsGoal);
 
-            using(MealPlannerDbContext dbCtx = new())
+            using (MealPlannerDbContext dbCtx = new())
             {
                 dbCtx.UserPreferences.Add(userPreference);
                 dbCtx.SaveChanges();

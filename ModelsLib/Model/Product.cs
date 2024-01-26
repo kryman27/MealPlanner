@@ -1,4 +1,4 @@
-﻿namespace MealPlannerAPI.Model;
+﻿namespace ModelsLib.Model;
 
 public class Product
 {
@@ -6,9 +6,9 @@ public class Product
     {
 
     }
-    public Product(int productId, string productName, decimal? fat, decimal? carbohydrates, decimal? protein, decimal? energy)
+    public Product(/*int productId,*/ string productName, decimal? fat, decimal? carbohydrates, decimal? protein, decimal? energy)
     {
-        ProductId = productId;
+        //ProductId = productId;
         ProductName = productName;
         Fat = fat;
         Carbohydrates = carbohydrates;
@@ -28,5 +28,5 @@ public class Product
 
     public decimal? Energy { get; set; }
 
-    public virtual ICollection<MealDetail> MealDetails { get; set; } = new List<MealDetail>();
+    //public virtual ICollection<MealDetail> MealDetails { get; set; } = new List<MealDetail>();
 }

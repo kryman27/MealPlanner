@@ -1,5 +1,5 @@
-﻿using MealPlannerAPI.Model;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using ModelsLib.Model;
 
 namespace MealPlannerAPI.Database
 {
@@ -52,7 +52,7 @@ namespace MealPlannerAPI.Database
                 entity.HasKey(e => e.MealDetailId);
                 entity.ToTable("MealDetails");
 
-                entity.HasOne(d => d.Product).WithMany(p => p.MealDetails).HasForeignKey(md => md.ProductId);
+                // entity.HasOne(d => d.Product).WithMany(p => p.MealDetails).HasForeignKey(md => md.ProductId);
             });
 
             modelBuilder.Entity<UserPreference>(entity =>

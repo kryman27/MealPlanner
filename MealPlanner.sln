@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileParser", "CsvParser\Fil
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MealPlannerUI", "MealPlannerUI\MealPlannerUI.csproj", "{682DB399-2D7F-47CE-AF7B-FDF6CBEFFCEB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelsLib", "ModelsLib\ModelsLib.csproj", "{38EBC500-C191-4F79-B0BA-18690E4E40B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{682DB399-2D7F-47CE-AF7B-FDF6CBEFFCEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{682DB399-2D7F-47CE-AF7B-FDF6CBEFFCEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{682DB399-2D7F-47CE-AF7B-FDF6CBEFFCEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38EBC500-C191-4F79-B0BA-18690E4E40B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38EBC500-C191-4F79-B0BA-18690E4E40B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38EBC500-C191-4F79-B0BA-18690E4E40B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38EBC500-C191-4F79-B0BA-18690E4E40B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

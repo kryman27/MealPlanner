@@ -1,7 +1,8 @@
 ﻿@page "/createcustommeal"
 @using MealPlannerUI.Data
+@using ModelsLib.Model;
 @inject AddProductService AddNewProduct
-@inject ProductInfoService ProdService
+@inject ProductService ProdService
 
 <PageTitle>Add product</PageTitle>
 <h3><i>Create your custom meal</i></h3>
@@ -145,6 +146,7 @@
             <tr>
                 <td>
                     <button class="btn-primary" style="margin: 2px;" @onclick="AddCustomProductToDb">Save</button>
+                    <Popup @ref="popupRef" />
                 </td>
                 <td>
                     <button class="btn-primary" style="margin: 2px;" @onclick="ClearCustomProduct">Clear</button>
@@ -156,10 +158,10 @@
 </div>
 
 @code {
-    double tempAmount;
+    decimal tempAmount;
     string prodSelectorTemp = String.Empty;
-    ProductInfo[]? prodInfForUI = new ProductInfo[] { };
-    public static ProductInfo customProduct = new ProductInfo();
+    Product[]? prodInfForUI = new Product[] { };
+    public static Product customProduct = new Product();
     List<CustomMealCalculator> preparedList = new List<CustomMealCalculator>();
 
     protected override async Task OnInitializedAsync()
@@ -167,24 +169,24 @@
         prodInfForUI = await ProdService.GetProductsInfo();
     }
 
-    private void AddToSelectedProducts(double amount, ProductInfo prod)
+    private void AddToSelectedProducts(decimal amount, Product prod)
     {
         var temp = new CustomMealCalculator()
         {
             Amount = amount,
             ProductName = prod.ProductName,
-            Fat = Math.Round((double)(prod.Fat * (amount / 100.0)), 2),
-            Protein = Math.Round((double)(prod.Protein * (amount / 100.0)), 2),
-            Carbohydrates = Math.Round((double)(prod.Carbohydrates * (amount / 100.0)), 2),
-            Energy = Math.Round((double)(prod.Energy * (amount / 100.0)), 2),
+            Fat = Math.Round((decimal)(prod.Fat * (amount / 100.0m)), 2),
+            Protein = Math.Round((decimal)(prod.Protein * (amount / 100.0m)), 2),
+            Carbohydrates = Math.Round((decimal)(prod.Carbohydrates * (amount / 100.0m)), 2),
+            Energy = Math.Round((decimal)(prod.Energy * (amount / 100.0m)), 2),
 
         };
         preparedList.Add(temp);
-        tempAmount = 0.0;
+        tempAmount = 0.0m;
         prodSelectorTemp = String.Empty;
     }
 
-    private void RemoveItemFromList(ProductInfo deleteThisItem)
+    private void RemoveItemFromList(Product deleteThisItem)
     {
         var itemToRemove = preparedList.Where(item => item.ProductId == deleteThisItem.ProductId).FirstOrDefault();
         preparedList.Remove(itemToRemove);
@@ -193,20 +195,28 @@
     private void ClearCustomProduct()
     {
         customProduct.ProductName = String.Empty;
-        customProduct.Carbohydrates = 0.0;
-        customProduct.Fat = 0.0;
-        customProduct.Protein = 0.0;
-        customProduct.Energy = 0.0;
+        customProduct.Carbohydrates = 0.0m;
+        customProduct.Fat = 0.0m;
+        customProduct.Protein = 0.0m;
+        customProduct.Energy = 0.0m;
     }
 
     private void AddCustomProductToDb()
     {
         AddNewProduct.AddProductToDb(customProduct.ProductName, (double)customProduct.Fat, (double)customProduct.Carbohydrates, (double)customProduct.Protein, (double)customProduct.Energy);
         customProduct.ProductName = String.Empty;
-        customProduct.Carbohydrates = 0.0;
-        customProduct.Fat = 0.0;
-        customProduct.Protein = 0.0;
-        customProduct.Energy = 0.0;
+        customProduct.Carbohydrates = 0.0m;
+        customProduct.Fat = 0.0m;
+        customProduct.Protein = 0.0m;
+        customProduct.Energy = 0.0m;
         preparedList.Clear();
+
+        ShowPopup();
+    }
+
+    private Popup popupRef;
+    private void ShowPopup()
+    {
+        popupRef.Show("Meal added succesfully");
     }
 }

@@ -3,8 +3,8 @@
     "http": {
       "commandName": "Project",
       "launchBrowser": true,
-      //"launchUrl": "swagger",
-      "launchUrl": "graphql",
+      "launchUrl": "swagger",
+      //"launchUrl": "graphql",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

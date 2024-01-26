@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace MealPlannerAPI.Model;
+﻿namespace ModelsLib.Model;
 
 public partial class UserPreference
 {

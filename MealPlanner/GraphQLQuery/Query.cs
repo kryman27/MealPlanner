@@ -1,29 +1,30 @@
 ﻿using MealPlannerAPI.Database;
-using MealPlannerAPI.Model;
 using Microsoft.EntityFrameworkCore;
+using ModelsLib.Model;
 
 namespace MealPlannerAPI.GraphQLQuery
 {
     public class Query
     {
         //[UseFiltering(typeof(ProductFilter))]
-        public DbSet<Product> GetProdutcs()
+        public List<Product> GetProdutcs()
         {
-            using var ctx = new MealPlannerDbContext();
+            using (MealPlannerDbContext ctx = new MealPlannerDbContext())
+            {
+                var products = ctx.Products.ToList();
 
-            var products = ctx.Products;
-
-            return products;
-
+                return products;
+            }
         }
 
         public List<Meal> GetMeals()
         {
-            var ctx = new MealPlannerDbContext();
+            using (var ctx = new MealPlannerDbContext())
+            {
+                var meals = ctx.Meals.Include(md => md.MealDetails).ThenInclude(p => p.Product).ToList();
 
-            var meals = ctx.Meals.Include(md => md.MealDetails).ThenInclude(p => p.Product).ToList();
-
-            return meals;
+                return meals;
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace MealPlannerAPI.Model
+﻿namespace ModelsLib.Model
 {
     public class MealDetail
     {

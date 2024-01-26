@@ -1,22 +1,27 @@
 ﻿using MealPlannerUI.Pages;
+using ModelsLib.Model;
 
 namespace MealPlannerUI.Data
 {
-    public class CustomMealCalculator : ProductInfo
+    public class CustomMealCalculator : Product
     {
-        public double Amount { get; set; }
+        public decimal Amount { get; set; }
         public static void CalculateCustomMeal(List<CustomMealCalculator> givenList)
         {
-            double totalMass = givenList.Sum(p => p.Amount);
-            double? totalFat = givenList.Sum(p => p.Fat);
-            double? totalCarbs = givenList.Sum(p => p.Carbohydrates);
-            double? totalProtein = givenList.Sum(p => p.Protein);
-            double? totalEnergy = givenList.Sum(p => p.Energy);
+            if (givenList == null || givenList.Count == 0)
+            {
+                return;
+            }
+            decimal totalMass = Convert.ToDecimal(givenList.Sum(p => p.Amount));
+            decimal totalFat = Convert.ToDecimal(givenList.Sum(p => p.Fat));
+            decimal totalCarbs = Convert.ToDecimal(givenList.Sum(p => p.Carbohydrates));
+            decimal totalProtein = Convert.ToDecimal(givenList.Sum(p => p.Protein));
+            decimal totalEnergy = Convert.ToDecimal(givenList.Sum(p => p.Energy));
             
-            CreateCustomMeal.customProduct.Carbohydrates = Math.Round((double)((totalCarbs * 100.0)/totalMass), 2);
-            CreateCustomMeal.customProduct.Fat = Math.Round((double)((totalFat * 100.0) / totalMass), 2);
-            CreateCustomMeal.customProduct.Protein = Math.Round((double)((totalProtein * 100.0) / totalMass), 2);
-            CreateCustomMeal.customProduct.Energy = Math.Round((double)((totalEnergy * 100.0) / totalMass), 2);
+            CreateCustomMeal.customProduct.Carbohydrates = Math.Round(((totalCarbs * 100.0m)/totalMass), 2);
+            CreateCustomMeal.customProduct.Fat = Math.Round(((totalFat * 100.0m) / totalMass), 2);
+            CreateCustomMeal.customProduct.Protein = Math.Round(((totalProtein * 100.0m) / totalMass), 2);
+            CreateCustomMeal.customProduct.Energy = Math.Round(((totalEnergy * 100.0m) / totalMass), 2);
         }
     }
 }
