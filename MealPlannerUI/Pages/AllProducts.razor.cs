@@ -4,7 +4,7 @@ namespace MealPlannerUI.Pages
 {
     public partial class AllProducts
     {
-        private Product[]? prodInfForUI;
+        private List<Product>? prodInfForUI;
         protected override async Task OnInitializedAsync()
         {
             prodInfForUI = await ProdService.GetProductsInfo();

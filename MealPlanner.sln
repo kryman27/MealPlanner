@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileParser", "CsvParser\Fil
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MealPlannerUI", "MealPlannerUI\MealPlannerUI.csproj", "{682DB399-2D7F-47CE-AF7B-FDF6CBEFFCEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelsLib", "ModelsLib\ModelsLib.csproj", "{38EBC500-C191-4F79-B0BA-18690E4E40B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelsLib", "ModelsLib\ModelsLib.csproj", "{38EBC500-C191-4F79-B0BA-18690E4E40B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

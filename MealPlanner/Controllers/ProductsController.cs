@@ -27,6 +27,7 @@ namespace MealPlannerAPI.Controllers
                 using (MealPlannerDbContext dbCtx = new MealPlannerDbContext())
                 {
                     var products = dbCtx.Products.ToList<Product>();
+                    //var result = JsonSerializer.Serialize(products);
                     //Response.Headers.Add("X-test-header", "666");
                     logger.LogInformation(LoggerInfo.ProductFound.GetStringValue());
                     return Results.Ok(products);
@@ -49,7 +50,7 @@ namespace MealPlannerAPI.Controllers
                     var product = dbCtx.Products.Where(p => p.ProductName.Contains(searchName)).ToList<Product>();
 
                     logger.LogInformation(LoggerInfo.ProductFound.GetStringValue() + $" by name: {searchName}");
-                    return Results.Ok(JsonSerializer.Serialize(product));
+                    return Results.Ok(product);
                 }
             }
             catch (Exception ex)

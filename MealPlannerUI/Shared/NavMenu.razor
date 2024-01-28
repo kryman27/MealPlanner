@@ -1,9 +1,10 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">MealPlannerUI</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+       @*  <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
-        </button>
+        </button> *@
+        <button class="btn-primary" style="margin: 2px;" @onclick="ToggleNavMenu">test</button>
     </div>
 </div>
 
@@ -15,13 +16,8 @@
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="addproduct">
-                <span class="oi oi-plus" aria-hidden="true"></span> Add product
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
             <NavLink class="nav-link" href="paginated-products">
-                <span class="oi oi-list" aria-hidden="true"></span> PaginationTest
+                <span class="oi oi-list" aria-hidden="true"></span> Products
             </NavLink>
         </div>
         <div class="nav-item px-3">
@@ -30,18 +26,28 @@
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="allproducts">
-                <span class="oi oi-list" aria-hidden="true"></span> All Products
+            <NavLink class="nav-link" href="addproduct">
+                <span class="oi oi-plus" aria-hidden="true"></span> Add product
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="createcustommeal">
-                <iconify-icon icon="game-icons:meal" width="30" height="30"></iconify-icon>Create meal
+            <NavLink class="nav-link" href="create-custom-product">
+                <iconify-icon icon="game-icons:meal" width="30" height="30"></iconify-icon>Create custom product
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="show-meals-for-day">
+                <iconify-icon icon="mdi:dinner" width="30" height="30"></iconify-icon>Show meals for day
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="underconstruction">
-                <iconify-icon icon="material-symbols:construction" width="30" height="30"></iconify-icon>Show meals for today
+                <iconify-icon icon="material-symbols:person" width="30" height="30"></iconify-icon>User preferences
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="underconstruction">
+                <iconify-icon icon="material-symbols:construction" width="30" height="30"></iconify-icon>Under construction
             </NavLink>
         </div>
     </nav>

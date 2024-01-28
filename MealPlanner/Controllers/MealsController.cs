@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ModelsLib.Model;
+using System.Text.Json;
 
 namespace MealPlannerAPI.Controllers
 {
@@ -25,6 +26,27 @@ namespace MealPlannerAPI.Controllers
                 List<Meal> result = dbCtx.Meals.Include(md => md.MealDetails).ThenInclude(p => p.Product).ToList();
 
                 return Results.Ok(result);
+            }
+        }
+
+        [HttpGet]
+        [Route("meals-by-date/{mealDate}")]
+        public IResult GetMeals(string mealDate)
+        {
+            try
+            {
+                using (MealPlannerDbContext dbCtx = new())
+                {
+                    var dtDate = DateTime.Parse(mealDate);
+                    List<Meal> result = dbCtx.Meals.Where(m => m.MealDate == dtDate).ToList();
+
+                    return Results.Ok(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
             }
         }
 

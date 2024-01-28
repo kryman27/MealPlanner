@@ -1,7 +1,10 @@
 ﻿@page "/paginated-products"
 @using MealPlannerUI.Data
 @inject ProductService ProdService
-
+<head>
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+</head>
 <PageTitle>MealPlannerUI</PageTitle>
 
 <h3>MealPlanner available products</h3>
@@ -45,7 +48,7 @@ else
         <option value="" disabled selected>Products per page</option>
         <option value="5">5</option>
         <option value="10" selected>10</option>
-        <option value="20">20</option>
+        <option value="15">15</option>
     </select>
     <br />
     <br />
@@ -53,5 +56,5 @@ else
         <MudPagination Color="Color.Primary" Count="totalPageCount" @bind-Selected="PageNumber" />
     </div>
 }
-
+<script src="_content/MudBlazor/MudBlazor.min.js"></script>
 

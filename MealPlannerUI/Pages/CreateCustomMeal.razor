@@ -1,11 +1,10 @@
-﻿@page "/createcustommeal"
+﻿@page "/create-custom-product"
 @using MealPlannerUI.Data
 @using ModelsLib.Model;
-@inject AddProductService AddNewProduct
 @inject ProductService ProdService
 
 <PageTitle>Add product</PageTitle>
-<h3><i>Create your custom meal</i></h3>
+<h3><i>Create your custom product</i></h3>
 <br/>
 <b>Select product:</b>
 <br />
@@ -64,7 +63,7 @@
                     </td>
                     <td><button><iconify-icon icon="material-symbols:add" @onclick="() => AddToSelectedProducts(tempAmount, prodInfForUI.FirstOrDefault(p => p.ProductName == prodSelectorTemp))"></iconify-icon></button></td>
                 </tr>
-                    @foreach (var selectedProduct in preparedList)
+                @foreach (var selectedProduct in preparedList)
                     {
                         <tr>
                             <td>@selectedProduct.ProductName</td>
@@ -78,11 +77,6 @@
                             </td>
                         </tr>
                     }
-                <tr>
-                    <td colspan="6" >
-                        <button class="btn-primary" @onclick="() => CustomMealCalculator.CalculateCustomMeal(preparedList)">Calculate</button>
-                    </td>
-                </tr>
             </tbody>
         </table>
     </div>
@@ -148,9 +142,6 @@
                     <button class="btn-primary" style="margin: 2px;" @onclick="AddCustomProductToDb">Save</button>
                     <Popup @ref="popupRef" />
                 </td>
-                <td>
-                    <button class="btn-primary" style="margin: 2px;" @onclick="ClearCustomProduct">Clear</button>
-                </td>
             </tr>
         </table>
     </div>
@@ -160,9 +151,9 @@
 @code {
     decimal tempAmount;
     string prodSelectorTemp = String.Empty;
-    Product[]? prodInfForUI = new Product[] { };
+    List<Product>? prodInfForUI = new();
     public static Product customProduct = new Product();
-    List<CustomMealCalculator> preparedList = new List<CustomMealCalculator>();
+    private List<CustomMealCalculator> preparedList = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -184,12 +175,18 @@
         preparedList.Add(temp);
         tempAmount = 0.0m;
         prodSelectorTemp = String.Empty;
+        CustomMealCalculator.CalculateCustomMeal(preparedList);
     }
 
     private void RemoveItemFromList(Product deleteThisItem)
     {
         var itemToRemove = preparedList.Where(item => item.ProductId == deleteThisItem.ProductId).FirstOrDefault();
         preparedList.Remove(itemToRemove);
+        CustomMealCalculator.CalculateCustomMeal(preparedList);
+        if (preparedList.Count == 0)
+        {
+            ClearCustomProduct();
+        }
     }
 
     private void ClearCustomProduct()
@@ -203,7 +200,7 @@
 
     private void AddCustomProductToDb()
     {
-        AddNewProduct.AddProductToDb(customProduct.ProductName, (double)customProduct.Fat, (double)customProduct.Carbohydrates, (double)customProduct.Protein, (double)customProduct.Energy);
+        ProdService.AddProductToDb(customProduct.ProductName, (double)customProduct.Fat, (double)customProduct.Carbohydrates, (double)customProduct.Protein, (double)customProduct.Energy);
         customProduct.ProductName = String.Empty;
         customProduct.Carbohydrates = 0.0m;
         customProduct.Fat = 0.0m;
@@ -217,6 +214,6 @@
     private Popup popupRef;
     private void ShowPopup()
     {
-        popupRef.Show("Meal added succesfully");
+        popupRef.Show("Custom product added succesfully");
     }
 }

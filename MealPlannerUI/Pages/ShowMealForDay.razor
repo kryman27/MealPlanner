@@ -1,0 +1,71 @@
+﻿@page "/show-meals-for-day"
+@using MealPlannerUI.Data
+@using ModelsLib.Model
+@inject MealService MealService
+
+<head>
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+</head>
+
+<h3>Show Meal For Day</h3>
+
+<div style="border-color: black; border: solid; width: 1400px; height: 800px;">
+    <div style="border-color: red; border: solid; width: 50%; height: 50%; float: left"></div>
+    <div style="border-color: yellow; border: solid; width: 50%; height: 50%; float: left">
+        <MudDatePicker PickerVariant="PickerVariant.Static" @bind-Date="Date" />
+    </div>
+    <div style="clear: both"></div>
+    <div style="border-color: green; border: solid; width: 50%; height: 50%; float: left">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Meal Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Meals)
+                {
+                    <tr>
+                        <td>@m.MealId</td>
+                        <td>@m.MealName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+    <div style="border-color: blue; border: solid; width: 50%; height: 50%; float: left"></div>
+    <div style="clear: both"></div>
+</div>
+
+<script src="_content/MudBlazor/MudBlazor.min.js"></script>
+
+@code {
+    DateTime? _date = DateTime.Today;
+
+    public event Action<DateTime> SelectedDateChanged;
+
+    DateTime? Date
+    {
+        get => _date;
+
+        set
+        {
+            if(_date != value)
+            {
+                _date = value;
+                SelectedDateChanged?.Invoke((DateTime)_date);
+                GetMeals();
+            }
+        }
+    }
+    List<Meal> Meals = new();
+
+    private void GetMeals()
+    {
+        Meals = MealService.GetMeals((DateTime)_date).Result;
+        StateHasChanged();
+    }
+}

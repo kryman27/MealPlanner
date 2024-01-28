@@ -1,6 +1,6 @@
 ﻿using ModelsLib.Model;
-using Newtonsoft.Json;
-using System.Net.Http.Headers;
+using System.Globalization;
+using System.Text.Json;
 
 namespace MealPlannerUI.Data
 {
@@ -8,31 +8,26 @@ namespace MealPlannerUI.Data
     {
         //private readonly TokenBearerService TokenBearerSvc;
         public static string dbLoadingExMsg = "unknown error";
-        //public readonly string apiUrl = "http://localhost:5068/api";
-        public readonly string apiUrl = "http://localhost:5000/api";
+        public readonly string apiUrl;
+       
 
         public ProductService()
         {
+            apiUrl = ConfigManager.ConfigManager.GetInstance().apiUrl;
+
             //TokenBearerSvc = new();
             //TokenBearerSvc.RetreiveToken("MealPlannerAPI");
         }
 
-        public async Task<Product[]> GetProductsInfo()
+        public async Task<List<Product>> GetProductsInfo()
         {
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
                     string productsApiUrl = $"{apiUrl}/products";
-                    
-                    var request = new HttpRequestMessage(HttpMethod.Get, productsApiUrl);
-                    //request.Headers.Add("Authorization", $"Bearer {TokenBearerSvc.Token}");
-                    
-                    var response = await client.SendAsync(request);
 
-                    string rawData = response.Content.ReadAsStringAsync().Result;
-
-                    var productInfoToDisplay = JsonConvert.DeserializeObject<Product[]>(rawData);
+                    var productInfoToDisplay = await client.GetFromJsonAsync<List<Product>>(productsApiUrl);
 
                     return productInfoToDisplay;
                 }
@@ -42,7 +37,7 @@ namespace MealPlannerUI.Data
                 dbLoadingExMsg = ex.Message.ToString();
             }
 
-            Product[] error = new Product[1]
+            List<Product> error = new()
             {
                 new Product
                 {
@@ -52,7 +47,7 @@ namespace MealPlannerUI.Data
             return error;
         }
 
-        public async Task<AnswerModel<Product[]>> GetPaginatedProducts(int productsPerPage, int pageNumber)
+        public async Task<AnswerModel<List<Product>>> GetPaginatedProducts(int productsPerPage, int pageNumber)
         {
             try
             {
@@ -64,14 +59,12 @@ namespace MealPlannerUI.Data
                     //request.Headers.Add("Authorization", $"Bearer {TokenBearerSvc.Token}");
 
                     var response = await client.SendAsync(request);
-
                     string rawData = response.Content.ReadAsStringAsync().Result;
-
-                    var productInfoToDisplay = JsonConvert.DeserializeObject<Product[]>(rawData);
+                    var productInfoToDisplay = JsonSerializer.Deserialize<List<Product>>(rawData);
 
                     var currentNumberOfPages = response.Headers.NonValidated.FirstOrDefault(h => h.Key == "X-number-of-pages").Value.ToString();
 
-                    return new AnswerModel<Product[]>(productInfoToDisplay, currentNumberOfPages);
+                    return new AnswerModel<List<Product>>(productInfoToDisplay, currentNumberOfPages);
                 }
             }
             catch (Exception ex)
@@ -79,14 +72,14 @@ namespace MealPlannerUI.Data
                 dbLoadingExMsg = ex.Message.ToString();
             }
 
-            var productInfoToDisplayError = new Product[1];
+            List<Product> productInfoToDisplayError = new()
             {
                 new Product
                 {
                     ProductName = dbLoadingExMsg
-                };
+                }
             };
-            return new AnswerModel<Product[]>(productInfoToDisplayError, "error");
+            return new AnswerModel<List<Product>>(productInfoToDisplayError, "error");
         }
 
         public async Task<List<Product>> GetSingleProductInfo(string searchName)
@@ -96,13 +89,11 @@ namespace MealPlannerUI.Data
                 using (HttpClient client = new HttpClient())
                 {
                     string productApiUrl = $"{apiUrl}/product/{searchName}";
-                    var request = new HttpRequestMessage(HttpMethod.Get, productApiUrl);
-                    //request.Headers.Add("Authorization", $"Bearer {TokenBearerSvc.Token}");
+                    //var request = new HttpRequestMessage(HttpMethod.Get, productApiUrl);
+                    ////request.Headers.Add("Authorization", $"Bearer {TokenBearerSvc.Token}");
 
-                    HttpResponseMessage response = await client.SendAsync(request);
-                    string rawData = response.Content.ReadAsStringAsync().Result;
-
-                    var productInfoToDisplay = JsonConvert.DeserializeObject<List<Product>>(rawData);
+                    //HttpResponseMessage response = await client.SendAsync(request);
+                    var productInfoToDisplay = await client.GetFromJsonAsync<List<Product>>(productApiUrl);
 
                     return productInfoToDisplay;
                 }
@@ -124,21 +115,47 @@ namespace MealPlannerUI.Data
 
         public async Task<HttpResponseMessage> DeleteSelectedProduct(int toDelete)
         {
-            using(HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient())
             {
-                string deleteApiUrl = $"{apiUrl}/product/{toDelete}";
-                
-                var response = await client.DeleteAsync(deleteApiUrl);
-
+                HttpResponseMessage response = null;
+                try
+                {
+                    string deleteApiUrl = $"{apiUrl}/product/{toDelete}";
+                    response = await client.DeleteAsync(deleteApiUrl);
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
                 return response;
-                //if (response.IsSuccessStatusCode)
-                //{
-                //    var er = response.RequestMessage.Content.ToString();
-                //}
-                //else
-                //{
-                //    var er = response.RequestMessage.Content.ToString();
-                //}
+            }
+        }
+
+        public async void AddProductToDb(string name, double fat, double carbs, double prot, double energy)
+        {
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+
+                    Product newProduct = new(name, Convert.ToDecimal(fat), Convert.ToDecimal(carbs), Convert.ToDecimal(prot), Convert.ToDecimal(energy));
+
+                    var jsonProduct = JsonSerializer.Serialize(newProduct);
+
+                    string addProductApiUrl = $"{apiUrl}/add-product";
+                    var request = new HttpRequestMessage(HttpMethod.Post, addProductApiUrl);
+                    var requestContent = JsonContent.Create(jsonProduct);
+                    request.Content = requestContent;
+
+                    //client.Send(request);
+                    HttpResponseMessage response = await client.SendAsync(request);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Rzucono wyjątek: {ex.Message}");
             }
         }
     }

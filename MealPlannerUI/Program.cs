@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Globalization;
 using MudBlazor.Services;
+using MealPlannerUI.ConfigManager;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<ProductService>();
-builder.Services.AddSingleton<AddProductService>();
+builder.Services.AddSingleton<MealService>();
 builder.Services.AddSingleton<TokenBearerService>();
+//builder.Services.AddSingleton<ConfigManager>();
 builder.Services.AddMudServices();
+
+//config from json file
+var config = ConfigManager.GetInstance();
+
 
 //var prepareToken = new TokenBearerService();
 //var retreivedToken = prepareToken.RetreiveToken("MealPlannerAPI");

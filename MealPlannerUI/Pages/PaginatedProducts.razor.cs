@@ -57,7 +57,7 @@ public partial class PaginatedProducts
             prodInfForUI.Clear();
             var prod = await ProdService.GetPaginatedProducts(ProductsNumber, PageNumber);
             totalPageCount = Convert.ToInt32(prod.HeaderInfoValue);
-            if (prod.DataModel.Length != 0)
+            if (prod.DataModel.Count != 0)
             {
                 foreach (var item in prod.DataModel)
                 {
