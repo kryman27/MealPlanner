@@ -1,0 +1,73 @@
+﻿@page "/plan-meals"
+@using ModelsLib.Model;
+@inject IDialogService DialogService
+
+<head>
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+</head>
+
+<style>
+    .dialog-backgroudn-blur {
+        backdrop-filter: blur(10px);
+    }
+</style>
+
+<h3>Plan your meals</h3>
+
+<div style="border-style: solid; border-color:black; width: 1600px; height: 800px">
+    <div style="width: 75%; height: 20%; float: left"><MudDatePicker Label="Choose date:" @bind-Date="date" /></div>
+    <div style="width: 25%; height: 20%; float: left">&nbsp;&nbsp&nbsp;&nbsp&nbsp;&nbsp;<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@((e) => OpenDialog(maxWidth, date))">Plan this!</MudButton></div>
+    <div style="clear: both"></div>
+    <div style="border-color: red; border: solid; width: 100%; height: 80%; float: left">
+        <MudSimpleTable>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Meal Name</th>
+                    <th>Products</th>
+                    <th>Amount [g]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Meals)
+                {
+                    <tr>
+                        <td>@m.MealId</td>
+                        <td>@m.MealName</td>
+                        <td>
+                            @foreach (var md in m.MealDetails)
+                            {
+                        <tr>@md.Product.ProductName</tr>
+                            }
+                    </td>
+                <td>
+                            @foreach (var md in m.MealDetails)
+                            {
+                    <tr>@md.Amount</tr>
+                            }
+                </td>
+                </tr>
+                }
+            </tbody>
+        </MudSimpleTable>
+    </div>
+</div>
+
+<script src="_content/MudBlazor/MudBlazor.min.js"></script>
+
+@code {
+    DateTime? date = DateTime.Today;
+    DialogOptions maxWidth = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true, DisableBackdropClick = true, ClassBackground = "dialog-backgroudn-blur" };
+
+    List<Meal> Meals = new();
+
+
+    private void OpenDialog(DialogOptions options, DateTime? date)
+    {
+        // var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters<PlanMealDialog>();
+        parameters.Add(x => x.Date, date);
+        DialogService.Show<PlanMealDialog>("Choose components for your meal", parameters, options);
+    }
+}

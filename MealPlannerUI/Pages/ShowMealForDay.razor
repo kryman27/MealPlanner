@@ -10,18 +10,15 @@
 
 <h3>Show Meal For Day</h3>
 
-<div style="border-color: black; border: solid; width: 1400px; height: 800px;">
-    <div style="border-color: red; border: solid; width: 50%; height: 50%; float: left"></div>
-    <div style="border-color: yellow; border: solid; width: 50%; height: 50%; float: left">
-        <MudDatePicker PickerVariant="PickerVariant.Static" @bind-Date="Date" />
-    </div>
-    <div style="clear: both"></div>
-    <div style="border-color: green; border: solid; width: 50%; height: 50%; float: left">
-        <table>
+<div style="border-color: black; border: solid; width: 1600px; height: 800px;">
+    <div style="border-color: red; border: solid; width: 50%; height: 100%; float: left">
+        <MudSimpleTable>
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Meal Name</th>
+                    <th>Products</th>
+                    <th>Amount [g]</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,13 +27,30 @@
                     <tr>
                         <td>@m.MealId</td>
                         <td>@m.MealName</td>
+                        <td>
+                            @foreach(var md in m.MealDetails)
+                            {
+                                <tr>@md.Product.ProductName</tr>
+                            }
+                        </td>
+                        <td>
+                            @foreach (var md in m.MealDetails)
+                            {
+                                <tr>@md.Amount</tr>
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>
-        </table>
-
+        </MudSimpleTable>
     </div>
-    <div style="border-color: blue; border: solid; width: 50%; height: 50%; float: left"></div>
+
+    <div style="border-color: yellow; border: solid; width: 25%; height: 50%; float: left">
+        <MudDatePicker PickerVariant="PickerVariant.Static" @bind-Date="Date" />
+    </div>
+    <div style="border-color: yellow; border: solid; width: 25%; height: 50%; float: left">a651651sdf</div>
+    
+    <div style="border-color: blue; border: solid; width: 50%; height: 50%; float: left">prawy dolny</div>
     <div style="clear: both"></div>
 </div>
 
@@ -66,6 +80,5 @@
     private void GetMeals()
     {
         Meals = MealService.GetMeals((DateTime)_date).Result;
-        StateHasChanged();
     }
 }

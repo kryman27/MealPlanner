@@ -1,0 +1,48 @@
+﻿@page "/user-preferences"
+@using MealPlannerUI.Data;
+@using ModelsLib.Model;
+@inject UserPreferencesService UPServ
+@inject NavigationManager NavMan
+
+<h3>UserPreferences</h3>
+
+<div style="border-style: solid; border-color:black; width: 1600px; height: 800px">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>UserPreferenceId</th>
+                <th>UserId</th>
+                <th>UserName</th>
+                <th>DailyEnrgGoalLow</th>
+                <th>DailyEnrgGoalHigh</th>
+                <th>DailyFatGoal</th>
+                <th>DailyCarbsGoal</th>
+                <th>DailyProteinsGoal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@userPreference.UserPreferenceId</td>
+                <td>@userPreference.UserId</td>
+                <td>@userPreference.UserName</td>
+                <td>@userPreference.DailyEnrgGoalLow</td>
+                <td>@userPreference.DailyEnrgGoalHigh</td>
+                <td>@userPreference.DailyFatGoal</td>
+                <td>@userPreference.DailyCarbsGoal</td>
+                <td>@userPreference.DailyProteinsGoal</td>
+            </tr>
+        </tbody>
+    </table>
+    <button class=" btn btn-primary" @onclick="() => NavMan.NavigateTo(uri)">Modify preferences</button>
+</div>
+
+@code {
+    public UserPreference userPreference;
+
+    public string uri = "http://localhost:5288/modify-user-preferences";
+
+    protected override async Task OnInitializedAsync()
+    {
+        userPreference = UPServ.RetriveUserPreferences(1);
+    }
+}

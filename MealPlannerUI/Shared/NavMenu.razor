@@ -1,10 +1,9 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">MealPlannerUI</a>
-       @*  <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
-        </button> *@
-        <button class="btn-primary" style="margin: 2px;" @onclick="ToggleNavMenu">test</button>
+        </button>
     </div>
 </div>
 
@@ -27,12 +26,12 @@
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="addproduct">
-                <span class="oi oi-plus" aria-hidden="true"></span> Add product
+                <span class="oi oi-plus" aria-hidden="true"></span> Add simple product
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="create-custom-product">
-                <iconify-icon icon="game-icons:meal" width="30" height="30"></iconify-icon>Create custom product
+                <iconify-icon icon="game-icons:meal" width="30" height="30"></iconify-icon>Add custom product
             </NavLink>
         </div>
         <div class="nav-item px-3">
@@ -41,15 +40,20 @@
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="underconstruction">
-                <iconify-icon icon="material-symbols:person" width="30" height="30"></iconify-icon>User preferences
+            <NavLink class="nav-link" href="plan-meals">
+                <iconify-icon icon="game-icons:hot-meal" width="30" height="30"></iconify-icon>Plan your meals
             </NavLink>
         </div>
         <div class="nav-item px-3">
+            <NavLink class="nav-link" href="user-preferences">
+                <iconify-icon icon="material-symbols:person" width="30" height="30"></iconify-icon>User preferences
+            </NavLink>
+        </div>
+        @* <div class="nav-item px-3">
             <NavLink class="nav-link" href="underconstruction">
                 <iconify-icon icon="material-symbols:construction" width="30" height="30"></iconify-icon>Under construction
             </NavLink>
-        </div>
+        </div> *@
     </nav>
 </div>
 

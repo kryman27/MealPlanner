@@ -38,7 +38,7 @@ namespace MealPlannerAPI.Controllers
                 using (MealPlannerDbContext dbCtx = new())
                 {
                     var dtDate = DateTime.Parse(mealDate);
-                    List<Meal> result = dbCtx.Meals.Where(m => m.MealDate == dtDate).ToList();
+                    List<Meal> result = dbCtx.Meals.Where(m => m.MealDate == dtDate).Include(md => md.MealDetails).ThenInclude(p => p.Product).ToList();
 
                     return Results.Ok(result);
                 }
@@ -50,11 +50,25 @@ namespace MealPlannerAPI.Controllers
             }
         }
 
-        //[HttpPost]
-        //[Route("meal")]
-        //public IResult CreateCustomMeal(Meal meal)
-        //{
+        [HttpPost]
+        [Route("meal")]
+        public IResult CreateMeal([FromBody] string mealData)
+        {
+            try
+            {
+                var newMeal = JsonSerializer.Deserialize<Meal>(mealData);
 
-        //}
+                using (MealPlannerDbContext dbCtx = new())
+                {
+                    dbCtx.Meals.Add(newMeal);
+                    return Results.Ok(newMeal.MealId);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
     }
 }

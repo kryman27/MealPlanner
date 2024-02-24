@@ -43,5 +43,19 @@ namespace MealPlannerAPI.Controllers
                 return Results.Ok(id);
             }
         }
+
+        [HttpPost("modify-preferences")]
+        public IResult ModifyUserPreferences([FromBody]UserPreference userPreference)
+        {
+            using(MealPlannerDbContext dbCtx = new())
+            {
+                var dbUserPref = dbCtx.UserPreferences.Update(userPreference);
+                dbCtx.SaveChanges();
+
+                //logger.LogInformation();
+
+                return Results.Ok(userPreference);
+            }
+        }
     }
 }

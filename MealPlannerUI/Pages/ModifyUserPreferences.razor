@@ -1,0 +1,69 @@
+﻿@page "/modify-user-preferences"
+@using MealPlannerUI.Data;
+@using ModelsLib.Model;
+@inject UserPreferencesService UPServ
+@inject NavigationManager NavManger
+
+<h3>ModifyUserPreferences</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>UserPreferenceId</th>
+            <th>UserId</th>
+            <th>UserName</th>
+            <th>DailyEnrgGoalLow</th>
+            <th>DailyEnrgGoalHigh</th>
+            <th>DailyFatGoal</th>
+            <th>DailyCarbsGoal</th>
+            <th>DailyProteinsGoal</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@userPreference.UserPreferenceId</td>
+            <td>@userPreference.UserId</td>
+            <td>@userPreference.UserName</td>
+            <td><input type="number" name="DailyEnrgGoalLow" @bind="userPreference.DailyEnrgGoalLow" /></td>
+            <td><input type="number" name="DailyEnrgGoalHigh" @bind="userPreference.DailyEnrgGoalHigh" /></td>
+            <td><input type="number" name="DailyFatGoal" @bind="userPreference.DailyFatGoal" /></td>
+            <td><input type="number" name="DailyCarbsGoal" @bind="userPreference.DailyCarbsGoal" /></td>
+            <td><input type="number" name="DailyProteinsGoal" @bind="userPreference.DailyProteinsGoal" /></td>
+        </tr>
+    </tbody>
+</table>
+
+<button class="btn btn-primary" @onclick="ModifyPreferences">Modify</button>
+<Popup @ref="popupRef" />
+
+@code {
+    public UserPreference userPreference;
+    // private NavigationManager _navigationManager;
+    private string _parentUrl = "http://localhost:5288/user-preferences";
+
+    protected override async Task OnInitializedAsync()
+    {
+        userPreference = UPServ.RetriveUserPreferences(1);
+    }
+
+    private void ModifyPreferences()
+    {
+        userPreference = UPServ.ModifyPreferences(userPreference);
+
+
+        if (userPreference.UserId != null && userPreference.UserId != 0)
+        {
+            ShowPopup("Preferences modified succesfully");
+            NavManger.NavigateTo(_parentUrl);
+        }
+        else
+            ShowPopup("Something went wrong");
+
+    }
+
+    private Popup popupRef;
+    private void ShowPopup(string message)
+    {
+        popupRef.Show(message);
+    }
+}

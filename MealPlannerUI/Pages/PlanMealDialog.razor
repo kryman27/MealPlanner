@@ -1,0 +1,245 @@
+﻿@using MealPlannerUI.Data
+@using ModelsLib.Model;
+@inject MealService MealService
+@inject ProductService ProdService
+
+<head>
+    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+</head>
+
+<MudDialog>
+    <DialogContent>
+        <div>
+            Meal name: <input type="text" @bind="mealName" style="border: solid; border-color: grey" />
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Amount [g]</th>
+                        <th>Fat</th>
+                        <th>Carbohydrates</th>
+                        <th>Proteins</th>
+                        <th>Energy</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <select style="background-color: transparent" @bind="prodSelectorTemp">
+                                <option value="" disabled selected>Select product</option>
+                                @foreach (var prod in prodInfForUI)
+                                {
+                                    <option value="@prod.ProductName">
+                                        @prod.ProductName
+                                    </option>
+                                }
+                            </select>
+                        </td>
+                        <td><input type="number" @bind="tempAmount" /></td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(prodSelectorTemp))
+                            {
+                                @prodInfForUI.FirstOrDefault(p => p.ProductName == prodSelectorTemp)?.Fat
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(prodSelectorTemp))
+                            {
+                                @prodInfForUI.FirstOrDefault(p => p.ProductName == prodSelectorTemp)?.Carbohydrates
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(prodSelectorTemp))
+                            {
+                                @prodInfForUI.FirstOrDefault(p => p.ProductName == prodSelectorTemp)?.Protein
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(prodSelectorTemp))
+                            {
+                                @prodInfForUI.FirstOrDefault(p => p.ProductName == prodSelectorTemp)?.Energy
+                            }
+                        </td>
+                        <td><button><iconify-icon icon="material-symbols:add" @onclick="() => AddToSelectedProducts(tempAmount, prodInfForUI.FirstOrDefault(p => p.ProductName == prodSelectorTemp))"></iconify-icon></button></td>
+                    </tr>
+                    @foreach (var selectedProduct in preparedList)
+                    {
+                        <tr>
+                            <td>@selectedProduct.ProductName</td>
+                            <td>@selectedProduct.Amount</td>
+                            <td>@selectedProduct.Fat</td>
+                            <td>@selectedProduct.Carbohydrates</td>
+                            <td>@selectedProduct.Protein</td>
+                            <td>@selectedProduct.Energy</td>
+                            <td>
+                                <button style="margin: auto; display:block;" @onclick="() => RemoveItemFromList(selectedProduct)"><iconify-icon icon="mdi:bin"></iconify-icon></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <table style="width: 100%; line-height:200%;">
+               
+                <td>
+                    Weigth
+                </td>
+                <td>
+                    @if (preparedList.Sum(x => x.Amount) != null)
+                    {
+                        @preparedList.Sum(x => x.Amount)
+                    }
+                </td>
+                
+                
+                    <td>
+                        Fat
+                    </td>
+                    <td>
+                        @if (preparedList.Sum(x => x.Fat) != null)
+                        {
+                            @preparedList.Sum(x => x.Fat)
+                        }
+                    </td>
+                
+                
+                    <td>
+                        Carbohydrates
+                    </td>
+                    <td>
+                    @if (preparedList.Sum(x => x.Carbohydrates) != null)
+                        {
+                            @preparedList.Sum(x => x.Carbohydrates)
+                        }
+                    </td>
+                
+                
+                    <td>
+                        Proteins
+                    </td>
+                    <td>
+                    @if (@preparedList.Sum(x => x.Protein) != null)
+                        {
+                            @preparedList.Sum(x => x.Protein)
+                        }
+                    </td>
+                
+                    <td>
+                        Energy
+                    </td>
+                    <td>
+                    @if (preparedList.Sum(x => x.Energy) != null)
+                        {
+                            @preparedList.Sum(x => x.Energy)
+                        }
+                    </td>
+                
+            </table>
+        </div>
+        <div style="clear: both;"></div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<script src="_content/MudBlazor/MudBlazor.min.js"></script>
+
+@code {
+    string mealName = string.Empty;
+    decimal tempAmount;
+    string prodSelectorTemp = String.Empty;
+    List<Product>? prodInfForUI = new();
+    // public Meal newMeal = new();
+    private List<CustomMealCalculator> preparedList = new();
+
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public DateTime? Date { get; set; }
+
+    // void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+
+    private void Submit()
+    {
+        //In a real world scenario this bool would probably be a service to delete the item from api/database
+        // Snackbar.Add("Server Deleted", Severity.Success);
+
+        AddMealToDb();
+        MudDialog.Close(DialogResult.Ok(Results.Ok()));
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        prodInfForUI = await ProdService.GetProductsInfo();
+    }
+
+    private void AddToSelectedProducts(decimal amount, Product prod)
+    {
+        var temp = new CustomMealCalculator()
+            {
+                Amount = amount,
+                ProductName = prod.ProductName,
+                Fat = Math.Round((decimal)(prod.Fat * (amount / 100.0m)), 2),
+                Protein = Math.Round((decimal)(prod.Protein * (amount / 100.0m)), 2),
+                Carbohydrates = Math.Round((decimal)(prod.Carbohydrates * (amount / 100.0m)), 2),
+                Energy = Math.Round((decimal)(prod.Energy * (amount / 100.0m)), 2),
+
+            };
+        preparedList.Add(temp);
+        tempAmount = 0.0m;
+        prodSelectorTemp = String.Empty;
+        CustomMealCalculator.CalculateCustomMeal(preparedList);
+    }
+
+    private void RemoveItemFromList(Product deleteThisItem)
+    {
+        var itemToRemove = preparedList.Where(item => item.ProductId == deleteThisItem.ProductId).FirstOrDefault();
+        preparedList.Remove(itemToRemove);
+        CustomMealCalculator.CalculateCustomMeal(preparedList);
+        if (preparedList.Count == 0)
+        {
+            ClearCustomProduct();
+        }
+    }
+
+    private void ClearCustomProduct()
+    {
+        // customProduct.ProductName = String.Empty;
+        // customProduct.Carbohydrates = 0.0m;
+        // customProduct.Fat = 0.0m;
+        // customProduct.Protein = 0.0m;
+        // customProduct.Energy = 0.0m;
+    }
+
+    private void AddMealToDb()
+    {
+        List<MealDetail> mealDetails = new();
+        decimal? totalFat = 0.0m;
+        decimal? totalCarbs = 0.0m;
+        decimal? totalProtein = 0.0m;
+        decimal? totalEnergy = 0.0m;
+
+        foreach(var item in preparedList)
+        {
+            totalFat += item.Fat;
+            totalCarbs += item.Carbohydrates;
+            totalProtein += item.Protein;
+            totalEnergy += item.Energy;
+            var mealDetail = new MealDetail();
+            mealDetails.Add(new MealDetail());
+        }
+
+
+
+        var newMeal = new Meal(0, Date, mealName, mealDetails);
+
+        var result = MealService.AddMealToDb(newMeal);
+        preparedList.Clear();
+    }
+}

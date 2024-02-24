@@ -14,7 +14,6 @@ namespace MealPlannerUI.ConfigManager
             var appPath = AppDomain.CurrentDomain.BaseDirectory;
             var configPath = Path.Combine(appPath, "MealPlannerConfig.json");
             var rawConfig = File.ReadAllText(configPath);
-            //var jsonConfig = JsonSerializer.Deserialize<ConfigManager>(rawConfig);
             JsonDocument jsonConfig = JsonDocument.Parse(rawConfig);
             var root = jsonConfig.RootElement;
 

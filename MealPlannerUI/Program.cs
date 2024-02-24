@@ -13,6 +13,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<ProductService>();
 builder.Services.AddSingleton<MealService>();
 builder.Services.AddSingleton<TokenBearerService>();
+builder.Services.AddSingleton<UserPreferencesService>();
 //builder.Services.AddSingleton<ConfigManager>();
 builder.Services.AddMudServices();
 
