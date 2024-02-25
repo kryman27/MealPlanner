@@ -1,5 +1,6 @@
 ﻿@page "/plan-meals"
 @using ModelsLib.Model;
+@inject Data.MealService MealService
 @inject IDialogService DialogService
 
 <head>
@@ -16,7 +17,7 @@
 <h3>Plan your meals</h3>
 
 <div style="border-style: solid; border-color:black; width: 1600px; height: 800px">
-    <div style="width: 75%; height: 20%; float: left"><MudDatePicker Label="Choose date:" @bind-Date="date" /></div>
+    <div style="width: 75%; height: 20%; float: left"><MudDatePicker Label="Choose date:" @bind-Date="Date" /></div>
     <div style="width: 25%; height: 20%; float: left">&nbsp;&nbsp&nbsp;&nbsp&nbsp;&nbsp;<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@((e) => OpenDialog(maxWidth, date))">Plan this!</MudButton></div>
     <div style="clear: both"></div>
     <div style="border-color: red; border: solid; width: 100%; height: 80%; float: left">
@@ -27,6 +28,7 @@
                     <th>Meal Name</th>
                     <th>Products</th>
                     <th>Amount [g]</th>
+                    <th>kcal sum</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,15 +40,15 @@
                         <td>
                             @foreach (var md in m.MealDetails)
                             {
-                        <tr>@md.Product.ProductName</tr>
+                                <tr>@md.Product.ProductName</tr>
                             }
-                    </td>
-                <td>
+                        </td>
+                        <td>
                             @foreach (var md in m.MealDetails)
                             {
-                    <tr>@md.Amount</tr>
+                                <tr>@md.Amount</tr>
                             }
-                </td>
+                        </td>
                 </tr>
                 }
             </tbody>
@@ -60,14 +62,57 @@
     DateTime? date = DateTime.Today;
     DialogOptions maxWidth = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true, DisableBackdropClick = true, ClassBackground = "dialog-backgroudn-blur" };
 
+    public event Action<DateTime> SelectedDateChanged;
+
+
+    DateTime? Date
+    {
+        get => date;
+
+        set
+        {
+            if (date != value)
+            {
+                date = value;
+                SelectedDateChanged?.Invoke((DateTime)date);
+                Meals = MealService.GetMeals(date.GetValueOrDefault()).Result;
+            }
+        }
+    }
+
     List<Meal> Meals = new();
 
 
-    private void OpenDialog(DialogOptions options, DateTime? date)
+    private async void OpenDialog(DialogOptions options, DateTime? date)
     {
-        // var options = new DialogOptions { CloseOnEscapeKey = true };
         var parameters = new DialogParameters<PlanMealDialog>();
+
         parameters.Add(x => x.Date, date);
-        DialogService.Show<PlanMealDialog>("Choose components for your meal", parameters, options);
+        var dialog = await DialogService.ShowAsync<PlanMealDialog>("Choose components for your meal", parameters, options);
+        var result = await dialog.Result;
+        if (!result.Cancelled)
+        {
+            await RefreshList();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Meals = MealService.GetMeals(date.GetValueOrDefault()).Result;
+    }
+
+    private async Task RefreshList()
+    {
+        var result = await MealService.GetMeals(date.GetValueOrDefault());
+        Meals = result.ToList();
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            await RefreshList();
+        }
     }
 }

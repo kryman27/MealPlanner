@@ -61,6 +61,7 @@ namespace MealPlannerAPI.Controllers
                 using (MealPlannerDbContext dbCtx = new())
                 {
                     dbCtx.Meals.Add(newMeal);
+                    dbCtx.SaveChanges();
                     return Results.Ok(newMeal.MealId);
                 }
             }

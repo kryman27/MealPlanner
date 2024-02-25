@@ -4,6 +4,8 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http.Headers;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
+using System.Text;
+using HttpMethod = System.Net.Http.HttpMethod;
 
 namespace MealPlannerUI.Data
 {
@@ -39,22 +41,30 @@ namespace MealPlannerUI.Data
             }
         }
 
-        public async Task<IResult> AddMealToDb(Meal newMeal)
+        public async void AddMealToDb(Meal newMeal)
         {
             try
             {
                 using (HttpClient client = new())
                 {
                     var requestUrl = $"{apiUrl}/meal";
+                    //var json = JsonSerializer.Serialize(newMeal);
+                    //var jsonRequestContent = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    var request = new HttpRequestMessage(System.Net.Http.HttpMethod.Post, requestUrl);
+                    //HttpResponseMessage response = await client.PostAsync(requestUrl, jsonRequestContent);
+
+                    //return Results.Ok(response.StatusCode);
+
+
+                    var jsonMeal = JsonSerializer.Serialize(newMeal);
+
                     
-                    var jsonRequestContent = JsonContent.Create(newMeal);
-                    request.Content = jsonRequestContent;
+                    var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+                    var requestContent = JsonContent.Create(jsonMeal);
+                    request.Content = requestContent;
 
-                    var response = await client.SendAsync(request);
-
-                    return Results.Ok(response.StatusCode);
+                    //client.Send(request);
+                    HttpResponseMessage response = await client.SendAsync(request);
                 }
             }
             catch (Exception ex)

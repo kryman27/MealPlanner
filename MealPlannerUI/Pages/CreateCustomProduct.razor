@@ -153,7 +153,7 @@
     string prodSelectorTemp = String.Empty;
     List<Product>? prodInfForUI = new();
     public static Product customProduct = new Product();
-    private List<CustomMealCalculator> preparedList = new();
+    private List<ProductIngredient> preparedList = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -162,27 +162,22 @@
 
     private void AddToSelectedProducts(decimal amount, Product prod)
     {
-        var temp = new CustomMealCalculator()
-        {
-            Amount = amount,
-            ProductName = prod.ProductName,
-            Fat = Math.Round((decimal)(prod.Fat * (amount / 100.0m)), 2),
-            Protein = Math.Round((decimal)(prod.Protein * (amount / 100.0m)), 2),
-            Carbohydrates = Math.Round((decimal)(prod.Carbohydrates * (amount / 100.0m)), 2),
-            Energy = Math.Round((decimal)(prod.Energy * (amount / 100.0m)), 2),
-
-        };
-        preparedList.Add(temp);
+        preparedList.Add(new ProductIngredient(amount, prod.ProductId, prod.ProductName, prod.Fat, prod.Carbohydrates, prod.Protein, prod.Energy));
         tempAmount = 0.0m;
         prodSelectorTemp = String.Empty;
-        CustomMealCalculator.CalculateCustomMeal(preparedList);
+        var temp = CustomsCalculator.CalculateCustomProduct(preparedList);
+
+        customProduct.Fat = temp.Fat;
+        customProduct.Carbohydrates = temp.Carbohydrates;
+        customProduct.Protein = temp.Protein;
+        customProduct.Energy = temp.Energy;
     }
 
-    private void RemoveItemFromList(Product deleteThisItem)
+    private void RemoveItemFromList(ProductIngredient deleteThisItem)
     {
         var itemToRemove = preparedList.Where(item => item.ProductId == deleteThisItem.ProductId).FirstOrDefault();
         preparedList.Remove(itemToRemove);
-        CustomMealCalculator.CalculateCustomMeal(preparedList);
+        CustomsCalculator.CalculateCustomProduct(preparedList);
         if (preparedList.Count == 0)
         {
             ClearCustomProduct();

@@ -2,6 +2,7 @@
 @using MealPlannerUI.Data
 @using ModelsLib.Model
 @inject MealService MealService
+@inject UserPreferencesService UPServ
 
 <head>
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
@@ -19,6 +20,7 @@
                     <th>Meal Name</th>
                     <th>Products</th>
                     <th>Amount [g]</th>
+                    <th>kcal sum</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,16 +41,21 @@
                                 <tr>@md.Amount</tr>
                             }
                         </td>
+                        <td>@Math.Round((decimal)@m.MealDetails.Sum(x => x.Product.Energy * (x.Amount / 100.0m)), 2)</td>
                     </tr>
                 }
             </tbody>
         </MudSimpleTable>
     </div>
 
+    @* wyświetlanie pokrycia celu z UserPreferences *@
+    <div style="border-color: yellow; border: solid; width: 25%; height: 50%; float: left">
+        <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
+    </div>
+
     <div style="border-color: yellow; border: solid; width: 25%; height: 50%; float: left">
         <MudDatePicker PickerVariant="PickerVariant.Static" @bind-Date="Date" />
     </div>
-    <div style="border-color: yellow; border: solid; width: 25%; height: 50%; float: left">a651651sdf</div>
     
     <div style="border-color: blue; border: solid; width: 50%; height: 50%; float: left">prawy dolny</div>
     <div style="clear: both"></div>
@@ -57,6 +64,9 @@
 <script src="_content/MudBlazor/MudBlazor.min.js"></script>
 
 @code {
+
+
+
     DateTime? _date = DateTime.Today;
 
     public event Action<DateTime> SelectedDateChanged;
@@ -72,13 +82,49 @@
                 _date = value;
                 SelectedDateChanged?.Invoke((DateTime)_date);
                 GetMeals();
+                var temp = Series.Where(x => x.Name == "Fulfilment").FirstOrDefault();
+                Series.Remove(temp);
+                
+                decimal? energyFulfilment = 0.0m;
+                decimal? fatFulfilment = 0.0m;
+                decimal? carbsFulfilment = 0.0m;
+                decimal? proteinsFulfilment = 0.0m;
+                foreach(var item in Meals)
+                {
+                    energyFulfilment += item.MealDetails.Sum(x => x.Product.Energy * (x.Amount / 100));
+                    fatFulfilment += item.MealDetails.Sum(x => x.Product.Fat * (x.Amount / 100));
+                    carbsFulfilment += item.MealDetails.Sum(x => x.Product.Carbohydrates * (x.Amount / 100));
+                    proteinsFulfilment += item.MealDetails.Sum(x => x.Product.Protein * (x.Amount / 100));
+                }
+                
+                Series.Add(new ChartSeries() { Name = "Fulfilment", Data = new double[] { (double)energyFulfilment, (double)fatFulfilment, (double)proteinsFulfilment, (double)carbsFulfilment } });
             }
         }
     }
     List<Meal> Meals = new();
 
+    public static UserPreference userPreference;
+
+    protected override async Task OnInitializedAsync()
+    {
+        GetMeals();
+
+        var energyFulfilment = Meals.Select(x => x.MealDetails).Sum(a => a.Sum(c=>c.Product.Energy * c.Amount));
+
+        var temp = UPServ.RetriveUserPreferences(1);
+        userPreference = new UserPreference(temp.UserId, temp.UserName, temp.DailyEnrgGoalLow, temp.DailyEnrgGoalHigh, temp.DailyFatGoal, temp.DailyCarbsGoal, temp.DailyProteinsGoal);
+        Series.Add(new ChartSeries() { Name = "Goal", Data = new double[] { userPreference.DailyEnrgGoalLow.Value, userPreference.DailyFatGoal.Value, userPreference.DailyProteinsGoal.Value, userPreference.DailyCarbsGoal.Value } });
+        Series.Add(new ChartSeries() { Name = "Fulfilment", Data = new double[] { (double)energyFulfilment, 20, 25, 27 } });
+    }
+
     private void GetMeals()
     {
         Meals = MealService.GetMeals((DateTime)_date).Result;
     }
+
+    private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
+
+    public List<ChartSeries> Series = new List<ChartSeries>();
+
+    public string[] XAxisLabels = { "Energy", "Fat", "Proteins", "Carbohydrates" };
 }

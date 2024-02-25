@@ -88,7 +88,7 @@
                     Weigth
                 </td>
                 <td>
-                    @if (preparedList.Sum(x => x.Amount) != null)
+                    @if (preparedList != null)
                     {
                         @preparedList.Sum(x => x.Amount)
                     }
@@ -99,9 +99,9 @@
                         Fat
                     </td>
                     <td>
-                        @if (preparedList.Sum(x => x.Fat) != null)
+                    @if (preparedList != null)
                         {
-                            @preparedList.Sum(x => x.Fat)
+                        @preparedList.Sum(x => (x.Fat*x.Amount/100))
                         }
                     </td>
                 
@@ -110,9 +110,9 @@
                         Carbohydrates
                     </td>
                     <td>
-                    @if (preparedList.Sum(x => x.Carbohydrates) != null)
+                    @if (preparedList != null)
                         {
-                            @preparedList.Sum(x => x.Carbohydrates)
+                        @preparedList.Sum(x => (x.Carbohydrates*x.Amount/100))
                         }
                     </td>
                 
@@ -121,9 +121,9 @@
                         Proteins
                     </td>
                     <td>
-                    @if (@preparedList.Sum(x => x.Protein) != null)
+                    @if (preparedList != null)
                         {
-                            @preparedList.Sum(x => x.Protein)
+                        @preparedList.Sum(x => (x.Protein*x.Amount/100))
                         }
                     </td>
                 
@@ -131,9 +131,9 @@
                         Energy
                     </td>
                     <td>
-                    @if (preparedList.Sum(x => x.Energy) != null)
+                    @if (preparedList != null)
                         {
-                            @preparedList.Sum(x => x.Energy)
+                        @preparedList.Sum(x => (x.Energy*x.Amount/100))
                         }
                     </td>
                 
@@ -154,14 +154,13 @@
     decimal tempAmount;
     string prodSelectorTemp = String.Empty;
     List<Product>? prodInfForUI = new();
-    // public Meal newMeal = new();
-    private List<CustomMealCalculator> preparedList = new();
 
+    private List<ProductIngredient> preparedList = new();
+    private List<MealDetail> newMealDetails = new();
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Parameter] public DateTime? Date { get; set; }
 
-    // void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
 
     private void Submit()
@@ -170,7 +169,8 @@
         // Snackbar.Add("Server Deleted", Severity.Success);
 
         AddMealToDb();
-        MudDialog.Close(DialogResult.Ok(Results.Ok()));
+
+        MudDialog.Close(DialogResult.Ok(true));
     }
 
 
@@ -181,27 +181,20 @@
 
     private void AddToSelectedProducts(decimal amount, Product prod)
     {
-        var temp = new CustomMealCalculator()
-            {
-                Amount = amount,
-                ProductName = prod.ProductName,
-                Fat = Math.Round((decimal)(prod.Fat * (amount / 100.0m)), 2),
-                Protein = Math.Round((decimal)(prod.Protein * (amount / 100.0m)), 2),
-                Carbohydrates = Math.Round((decimal)(prod.Carbohydrates * (amount / 100.0m)), 2),
-                Energy = Math.Round((decimal)(prod.Energy * (amount / 100.0m)), 2),
 
-            };
-        preparedList.Add(temp);
+        preparedList.Add(new ProductIngredient(amount, prod.ProductId, prod.ProductName, prod.Fat, prod.Carbohydrates, prod.Protein, prod.Energy));
         tempAmount = 0.0m;
-        prodSelectorTemp = String.Empty;
-        CustomMealCalculator.CalculateCustomMeal(preparedList);
+        prodSelectorTemp = string.Empty;
+        var temp = CustomsCalculator.CalculateMealDetails(preparedList);
+
+        newMealDetails.AddRange(temp);
     }
 
-    private void RemoveItemFromList(Product deleteThisItem)
+    private void RemoveItemFromList(ProductIngredient deleteThisItem)
     {
         var itemToRemove = preparedList.Where(item => item.ProductId == deleteThisItem.ProductId).FirstOrDefault();
         preparedList.Remove(itemToRemove);
-        CustomMealCalculator.CalculateCustomMeal(preparedList);
+        CustomsCalculator.CalculateCustomProduct(preparedList);
         if (preparedList.Count == 0)
         {
             ClearCustomProduct();
@@ -227,19 +220,14 @@
 
         foreach(var item in preparedList)
         {
-            totalFat += item.Fat;
-            totalCarbs += item.Carbohydrates;
-            totalProtein += item.Protein;
-            totalEnergy += item.Energy;
-            var mealDetail = new MealDetail();
-            mealDetails.Add(new MealDetail());
+            mealDetails.Add(new MealDetail() { ProductId = item.ProductId, Amount = item.Amount});
         }
 
 
 
-        var newMeal = new Meal(0, Date, mealName, mealDetails);
+        var newMeal = new Meal() { MealDate = Date, MealName = mealName, MealDetails = mealDetails };
 
-        var result = MealService.AddMealToDb(newMeal);
+        MealService.AddMealToDb(newMeal);
         preparedList.Clear();
     }
 }

@@ -6,9 +6,9 @@
         {
 
         }
-        public MealDetail(int mealId, int productId, decimal amount)
+        public MealDetail(/*int mealId,*/ int productId, decimal amount)
         {
-            MealId = mealId;
+            //MealId = mealId;
             ProductId = productId;
             Amount = amount;
         }
