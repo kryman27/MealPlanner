@@ -71,5 +71,19 @@ namespace MealPlannerAPI.Controllers
                 throw;
             }
         }
+
+        [HttpDelete]
+        [Route("meal/{mealId}")]
+        public IResult DeleteMeal(int mealId)
+        {
+            using(MealPlannerDbContext dbCtx = new())
+            {
+                var mealToDelete = dbCtx.Meals.FirstOrDefault(m => m.MealId == mealId);
+                dbCtx.Meals.Remove(mealToDelete);
+                dbCtx.SaveChanges();
+
+                return Results.Ok(mealToDelete.MealId);
+            }
+        }
     }
 }

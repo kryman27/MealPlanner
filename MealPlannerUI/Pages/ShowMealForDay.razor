@@ -42,22 +42,25 @@
                             }
                         </td>
                         <td>@Math.Round((decimal)@m.MealDetails.Sum(x => x.Product.Energy * (x.Amount / 100.0m)), 2)</td>
+                        <td><button @onclick="() => DeleteMeal(m.MealId)"><iconify-icon icon="mdi:trash" width="35" height="35"></iconify-icon></button></td>
                     </tr>
                 }
             </tbody>
         </MudSimpleTable>
     </div>
 
-    @* wyświetlanie pokrycia celu z UserPreferences *@
+    
     <div style="border-color: yellow; border: solid; width: 25%; height: 50%; float: left">
-        <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
+        habazaba
     </div>
 
     <div style="border-color: yellow; border: solid; width: 25%; height: 50%; float: left">
         <MudDatePicker PickerVariant="PickerVariant.Static" @bind-Date="Date" />
     </div>
     
-    <div style="border-color: blue; border: solid; width: 50%; height: 50%; float: left">prawy dolny</div>
+    <div style="border-color: blue; border: solid; width: 50%; height: 50%; float: left">
+        <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
+    </div>
     <div style="clear: both"></div>
 </div>
 
@@ -127,4 +130,28 @@
     public List<ChartSeries> Series = new List<ChartSeries>();
 
     public string[] XAxisLabels = { "Energy", "Fat", "Proteins", "Carbohydrates" };
+
+    private void DeleteMeal(int mealId)
+    {
+        MealService.DeleteMeal(mealId);
+
+        Meals = MealService.GetMeals(_date.GetValueOrDefault()).Result;
+
+        RefreshList();
+    }
+
+    private async Task RefreshList()
+    {
+        var result = await MealService.GetMeals(_date.GetValueOrDefault());
+        Meals = result.ToList();
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            await RefreshList();
+        }
+    }
 }

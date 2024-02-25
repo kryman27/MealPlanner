@@ -72,7 +72,18 @@ namespace MealPlannerUI.Data
                 Console.WriteLine(ex.Message);
                 throw;
             }
+        }
 
+        public async void DeleteMeal(int mealId)
+        {
+            using(HttpClient client = new())
+            {
+                var requestUrl = $"{apiUrl}/meal/{mealId}";
+
+                var response = client.DeleteAsync(requestUrl);
+
+                var result = response.Result;
+            }
         }
     }
 }

@@ -49,6 +49,7 @@
                                 <tr>@md.Amount</tr>
                             }
                         </td>
+                        <td><button @onclick="() => DeleteMeal(m.MealId)"><iconify-icon icon="mdi:trash" width="35" height="35"></iconify-icon></button></td>
                 </tr>
                 }
             </tbody>
@@ -114,5 +115,14 @@
         {
             await RefreshList();
         }
+    }
+
+    private void DeleteMeal(int mealId)
+    {
+        MealService.DeleteMeal(mealId);
+
+        Meals = MealService.GetMeals(date.GetValueOrDefault()).Result;
+
+        RefreshList();
     }
 }
