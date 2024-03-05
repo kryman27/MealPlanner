@@ -2,12 +2,11 @@
 
 public partial class UserPreference
 {
-    public UserPreference(int userId, string userName, int? dailyEnrgGoalLow, int? dailyEnrgGoalHigh, int? dailyFatGoal, int? dailyCarbsGoal, int? dailyProteinsGoal)
+    public UserPreference(int userId, string userName, int? dailyEnrgGoal, int? dailyFatGoal, int? dailyCarbsGoal, int? dailyProteinsGoal)
     {
         UserId = userId;
         UserName = userName;
-        DailyEnrgGoalLow = dailyEnrgGoalLow;
-        DailyEnrgGoalHigh = dailyEnrgGoalHigh;
+        DailyEnrgGoal = dailyEnrgGoal;
         DailyFatGoal = dailyFatGoal;
         DailyCarbsGoal = dailyCarbsGoal;
         DailyProteinsGoal = dailyProteinsGoal;
@@ -19,9 +18,7 @@ public partial class UserPreference
 
     public string UserName { get; set; }
 
-    public int? DailyEnrgGoalLow { get; set; }
-
-    public int? DailyEnrgGoalHigh { get; set; }
+    public int? DailyEnrgGoal { get; set; }
 
     public int? DailyFatGoal { get; set; }
 

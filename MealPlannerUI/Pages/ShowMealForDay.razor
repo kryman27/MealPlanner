@@ -51,7 +51,37 @@
 
     
     <div style="border-color: yellow; border: solid; width: 25%; height: 50%; float: left">
-        habazaba
+        <b>Goals and fulfilment</b>
+        <br/>
+        <br/>
+        <MudSimpleTable>
+            <thead>
+                <tr>
+                    <th>Source</th>
+                    <th>Energy</th>
+                    <th>Fat</th>
+                    <th>Proteins</th>
+                    <th>Carbs</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Goal</td>
+                    <td>@userPreference.DailyEnrgGoal</td>
+                    <td>@userPreference.DailyFatGoal</td>
+                    <td>@userPreference.DailyProteinsGoal</td>
+                    <td>@userPreference.DailyCarbsGoal</td>
+                </tr>
+                <tr>
+                    <td>Fulfilment</td>
+                    <td>@energyFulfilment</td>
+                    <td>@fatFulfilment</td>
+                    <td>@proteinsFulfilment</td>
+                    <td>@carbsFulfilment</td>
+                </tr>
+            </tbody>
+
+        </MudSimpleTable>
     </div>
 
     <div style="border-color: yellow; border: solid; width: 25%; height: 50%; float: left">
@@ -87,7 +117,7 @@
                 GetMeals();
                 var temp = Series.Where(x => x.Name == "Fulfilment").FirstOrDefault();
                 Series.Remove(temp);
-                
+
                 decimal? energyFulfilment = 0.0m;
                 decimal? fatFulfilment = 0.0m;
                 decimal? carbsFulfilment = 0.0m;
@@ -99,12 +129,22 @@
                     carbsFulfilment += item.MealDetails.Sum(x => x.Product.Carbohydrates * (x.Amount / 100));
                     proteinsFulfilment += item.MealDetails.Sum(x => x.Product.Protein * (x.Amount / 100));
                 }
-                
+
+                this.energyFulfilment = Math.Round((decimal)energyFulfilment, 2);
+                this.fatFulfilment = Math.Round((decimal)fatFulfilment, 2);
+                this.proteinsFulfilment = Math.Round((decimal)proteinsFulfilment, 2);
+                this.carbsFulfilment = Math.Round((decimal)carbsFulfilment, 2);
+
                 Series.Add(new ChartSeries() { Name = "Fulfilment", Data = new double[] { (double)energyFulfilment, (double)fatFulfilment, (double)proteinsFulfilment, (double)carbsFulfilment } });
             }
         }
     }
     List<Meal> Meals = new();
+
+    decimal? energyFulfilment;
+    decimal? fatFulfilment;
+    decimal? proteinsFulfilment;
+    decimal? carbsFulfilment;
 
     public static UserPreference userPreference;
 
@@ -112,12 +152,10 @@
     {
         GetMeals();
 
-        var energyFulfilment = Meals.Select(x => x.MealDetails).Sum(a => a.Sum(c=>c.Product.Energy * c.Amount));
-
         var temp = UPServ.RetriveUserPreferences(1);
-        userPreference = new UserPreference(temp.UserId, temp.UserName, temp.DailyEnrgGoalLow, temp.DailyEnrgGoalHigh, temp.DailyFatGoal, temp.DailyCarbsGoal, temp.DailyProteinsGoal);
-        Series.Add(new ChartSeries() { Name = "Goal", Data = new double[] { userPreference.DailyEnrgGoalLow.Value, userPreference.DailyFatGoal.Value, userPreference.DailyProteinsGoal.Value, userPreference.DailyCarbsGoal.Value } });
-        Series.Add(new ChartSeries() { Name = "Fulfilment", Data = new double[] { (double)energyFulfilment, 20, 25, 27 } });
+        userPreference = new UserPreference(temp.UserId, temp.UserName, temp.DailyEnrgGoal, temp.DailyFatGoal, temp.DailyCarbsGoal, temp.DailyProteinsGoal);
+        Series.Add(new ChartSeries() { Name = "Goal", Data = new double[] { userPreference.DailyEnrgGoal.Value, userPreference.DailyFatGoal.Value, userPreference.DailyProteinsGoal.Value, userPreference.DailyCarbsGoal.Value } });
+        //Series.Add(new ChartSeries() { Name = "Fulfilment", Data = new double[] { (double)energyFulfilment, (double)fatFulfilment, (double)proteinsFulfilment, (double)carbsFulfilment } });
     }
 
     private void GetMeals()

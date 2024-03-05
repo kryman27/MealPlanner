@@ -143,7 +143,7 @@ namespace MealPlannerUI.Data
 
                     var jsonProduct = JsonSerializer.Serialize(newProduct);
 
-                    string addProductApiUrl = $"{apiUrl}/add-product";
+                    string addProductApiUrl = $"{apiUrl}/product";
                     var request = new HttpRequestMessage(HttpMethod.Post, addProductApiUrl);
                     var requestContent = JsonContent.Create(jsonProduct);
                     request.Content = requestContent;

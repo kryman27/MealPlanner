@@ -60,7 +60,7 @@ namespace MealPlannerAPI.Controllers
             }
         }
 
-        [HttpPost("add-product")]
+        [HttpPost("product")]
         public IResult AddNewProduct([FromBody] string newProduct)
         {
             Product insertProd = JsonSerializer.Deserialize<Product>(newProduct);
@@ -110,7 +110,7 @@ namespace MealPlannerAPI.Controllers
             }
         }
 
-        [HttpPut("update-product/{name}/{fat}/{carb}/{prot}/{enrg}")]
+        [HttpPut("product/{name}/{fat}/{carb}/{prot}/{enrg}")]
         public IResult UpdateSelected(string name, decimal fat, decimal carb, decimal prot, decimal enrg)
         {
             try

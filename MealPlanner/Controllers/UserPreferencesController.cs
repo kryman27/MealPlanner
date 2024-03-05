@@ -28,9 +28,9 @@ namespace MealPlannerAPI.Controllers
         }
 
         [HttpPost("preferences")]
-        public IResult AddUserPreferences(int userId, string userName, int dailyEnergyGoalLow, int dailyEnergyGoalHigh, int dailyFatGoal, int dailyCarbsGoal, int dailyProteinsGoal)
+        public IResult AddUserPreferences(int userId, string userName, int dailyEnergyGoalHigh, int dailyFatGoal, int dailyCarbsGoal, int dailyProteinsGoal)
         {
-            UserPreference userPreference = new(userId, userName, dailyEnergyGoalLow, dailyEnergyGoalHigh, dailyFatGoal, dailyCarbsGoal, dailyProteinsGoal);
+            UserPreference userPreference = new(userId, userName, dailyEnergyGoalHigh, dailyFatGoal, dailyCarbsGoal, dailyProteinsGoal);
 
             using (MealPlannerDbContext dbCtx = new())
             {
