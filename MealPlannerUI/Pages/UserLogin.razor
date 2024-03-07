@@ -1,0 +1,47 @@
+﻿@page "/login"
+@using MealPlannerUI.Data;
+@inject UserManagerService UserManager
+@inject NavigationManager NavManager
+
+<h3>UserLogin</h3>
+
+<div style="border-style: solid; border-color: blue; height: 500px; width: 250px; align-items: center">
+    Login: <input type="text" @bind="user"/>
+    <br /><br />
+    Password: <input type="password" @bind="password"/>
+    <br /><br /><br />
+    <button class="btn-primary" @onclick="() => Login(user, password)">Login</button>
+</div>
+
+@code {
+    private string user;
+    private string password;
+
+
+    //public record UserDetails(UserPreferences userPref);
+
+    private bool Login(string user, string password)
+    {
+        
+
+        var result = UserManager.LoginUser(user, password);
+
+        if (result.Result != null)
+        {
+            UserManager.loginFlag = true;
+            this.user = default;
+            this.password = default;
+
+            NavManager.NavigateTo("/");
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+        
+    }
+
+}

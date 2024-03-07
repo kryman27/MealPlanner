@@ -1,10 +1,18 @@
 ﻿using MealPlannerAPI.Authentication;
+using MealPlannerAPI.Database;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ModelsLib.DTOs;
+using ModelsLib.Model;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace MealPlannerAPI.Controllers
 {
     [ApiController]
-    [Route("api")]
+    [Route("api/")]
     //[Authorize]
     public class AuthenticationController : ControllerBase
     {
@@ -16,13 +24,33 @@ namespace MealPlannerAPI.Controllers
             this.authService = authService;
         }
 
-        [HttpPost("/create-token")]
+        [HttpPost("login")]
         //[AllowAnonymous]
-        public async Task<IActionResult> CreateJwtToken([FromBody] string userName)
+        public IResult CreateJwtToken([FromBody] UserData givenUserData)
         {
-            var token = authService.GenerateJwtToken(userName);
+            UserDataDTO result = null;
 
-            return Ok(new { Token = token });
+            //TODO - dodanie sprawdzenia hasła i loginu w tabeli UserData
+            
+            using(MealPlannerDbContext dbCtx = new())
+            {
+                var userData = dbCtx.UserData.Where(x => x.UserName == givenUserData.UserName).FirstOrDefault();
+                if (userData == null)
+                {
+                    return Results.Ok("user not found");
+                }
+                if(userData != null)
+                {
+                    if(userData.UserName == givenUserData.UserName && userData.UserPassword == givenUserData.UserPassword)
+                    {
+                        var token = authService.GenerateJwtToken(givenUserData.UserName);
+
+                        result = new UserDataDTO(userData.UserId, userData.UserName, token);
+                    }
+                }
+            }
+            
+            return Results.Ok(result);
         }
 
 

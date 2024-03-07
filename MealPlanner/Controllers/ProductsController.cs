@@ -1,5 +1,6 @@
 ﻿using EnumStringValues;
 using MealPlannerAPI.Database;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ModelsLib.Model;
@@ -170,9 +171,10 @@ namespace MealPlannerAPI.Controllers
             }
         }
 
-        [Route("paginated-products/{productsPerPage}/{pageNumber}")]
+        //[Route("paginated-products/{productsPerPage}/{pageNumber}")]
+        [Route("paginated-products")]
         [HttpGet]
-        public IResult GetPaginatedProducts(int productsPerPage, int pageNumber)
+        public IResult GetPaginatedProducts([FromQuery] int productsPerPage, [FromQuery]int pageNumber)
         {
             int initialIndex = productsPerPage * pageNumber;
             double totalNumberOfPages;

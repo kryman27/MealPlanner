@@ -19,6 +19,7 @@ namespace MealPlannerAPI.Database
         public virtual DbSet<Meal> Meals { get; set; }
         public virtual DbSet<UserPreference> UserPreferences { get; set; }
         public virtual DbSet<MealDetail> MealProducts { get; set; }
+        public virtual DbSet<UserData> UserData { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
             optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=MealPlannerDB;Trusted_Connection=True;");
@@ -59,6 +60,12 @@ namespace MealPlannerAPI.Database
             {
                 entity.HasKey(e => e.UserPreferenceId);
                 entity.ToTable("UserPreferences");
+            });
+
+            modelBuilder.Entity<UserData>(entity =>
+            {
+                entity.HasKey(e => e.UserId);
+                entity.ToTable("UserData");
             });
 
             base.OnModelCreating(modelBuilder);

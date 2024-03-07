@@ -13,7 +13,7 @@ namespace MealPlannerUI.Data
 
         public ProductService()
         {
-            apiUrl = ConfigManager.ConfigManager.GetInstance().apiUrl;
+            apiUrl = ConfigManagerNamespace.ConfigManager.GetInstance().apiUrl;
 
             //TokenBearerSvc = new();
             //TokenBearerSvc.RetreiveToken("MealPlannerAPI");
@@ -53,7 +53,7 @@ namespace MealPlannerUI.Data
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    string productsApiUrl = $"{apiUrl}/paginated-products/{productsPerPage}/{pageNumber}";
+                    string productsApiUrl = $"{apiUrl}/paginated-products?productsPerPage={productsPerPage}&pageNumber={pageNumber}";
 
                     var request = new HttpRequestMessage(HttpMethod.Get, productsApiUrl);
                     //request.Headers.Add("Authorization", $"Bearer {TokenBearerSvc.Token}");

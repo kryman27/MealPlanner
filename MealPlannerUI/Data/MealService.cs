@@ -1,5 +1,5 @@
 ﻿using ModelsLib.Model;
-using MealPlannerUI.ConfigManager;
+using MealPlannerUI.ConfigManagerNamespace;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http.Headers;
@@ -15,7 +15,7 @@ namespace MealPlannerUI.Data
 
         public MealService()
         {
-            var url = ConfigManager.ConfigManager.GetInstance();
+            var url = ConfigManagerNamespace.ConfigManager.GetInstance();
             apiUrl = url.apiUrl;
         }
 

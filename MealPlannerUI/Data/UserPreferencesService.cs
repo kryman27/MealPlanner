@@ -11,7 +11,7 @@ public class UserPreferencesService
 
     public UserPreferencesService()
     {
-        apiUrl = ConfigManager.ConfigManager.GetInstance().apiUrl;
+        apiUrl = ConfigManagerNamespace.ConfigManager.GetInstance().apiUrl;
     }
 
     public UserPreference RetriveUserPreferences(int userId)

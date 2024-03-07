@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Globalization;
 using MudBlazor.Services;
-using MealPlannerUI.ConfigManager;
+using MealPlannerUI.ConfigManagerNamespace;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +14,7 @@ builder.Services.AddSingleton<ProductService>();
 builder.Services.AddSingleton<MealService>();
 builder.Services.AddSingleton<TokenBearerService>();
 builder.Services.AddSingleton<UserPreferencesService>();
+builder.Services.AddSingleton<UserManagerService>();
 //builder.Services.AddSingleton<ConfigManager>();
 builder.Services.AddMudServices();
 
